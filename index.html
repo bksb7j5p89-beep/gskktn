@@ -44,9 +44,12 @@
         /* AQI CARD */
         .aqi-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0; position: relative; height: var(--aqi-height); display: flex; flex-direction: column; overflow: hidden; }
         .card-label { font-size: 1.2rem; font-weight: 700; color: var(--text-sub); position: absolute; top: 20px; left: 25px; z-index: 10; }
-        .gauge-section { flex: 6; position: relative; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; width: 100%; }
-        .gauge-wrapper { position: relative; width: 90%; height: 100%; }
-        .info-section { flex: 4; display: flex; flex-direction: row; border-top: 1px solid #f1f5f9; }
+        
+        /* [SỬA] Tăng chiều cao phần hiển thị gauge để thoáng hơn */
+        .gauge-section { flex: 7; position: relative; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 0px; width: 100%; }
+        .gauge-wrapper { position: relative; width: 95%; height: 100%; }
+        
+        .info-section { flex: 3; display: flex; flex-direction: row; border-top: 1px solid #f1f5f9; z-index: 5; background: #fff; }
         .aqi-value-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid #f1f5f9; background: #f8fafc50; }
         .aqi-number { font-size: 5.5rem; font-weight: 900; line-height: 1; color: #1e293b; letter-spacing: -2px; }
         .aqi-sub-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; margin-top: 5px; }
@@ -125,10 +128,8 @@
         .btn-back { background: #f1f5f9; border: none; padding: 12px 24px; border-radius: 99px; font-size: 1rem; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-back:hover { background: #e2e8f0; color: #1e293b; }
         
-        /* [SỬA] Cấu trúc Min/Max */
         .modal-body { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; }
         .stat-box { display: flex; flex-direction: column; gap: 20px; padding: 0; background: none; }
-        
         .stat-tile { flex: 1; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .tile-label { font-size: 0.85rem; font-weight: 700; opacity: 0.7; }
         .tile-value { font-size: 4rem; font-weight: 900; line-height: 1; }
@@ -137,8 +138,6 @@
         .min-val { background: #dcfce7; border: 2px solid #10b981; color: #10b981; }
         .min-val .tile-label, .max-val .tile-label { color: inherit; opacity: 0.7; }
 
-
-        /* TABLE STYLE (NEW) */
         .table-section { background: #fff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; }
         .section-title { font-size: 1rem; font-weight: 700; color: #94a3b8; margin-bottom: 15px; display: block; text-transform: uppercase; }
         .weekly-table { width: 100%; border-collapse: collapse; }
@@ -256,13 +255,15 @@
     function calculateNeedleAngle(aqi) { const segment = Math.PI / 6; let angle = 0; if (aqi <= 50) angle = (aqi / 50) * segment; else if (aqi <= 100) angle = segment + ((aqi - 50) / 50) * segment; else if (aqi <= 150) angle = segment * 2 + ((aqi - 100) / 50) * segment; else if (aqi <= 200) angle = segment * 3 + ((aqi - 150) / 50) * segment; else if (aqi <= 300) angle = segment * 4 + ((aqi - 200) / 100) * segment; else { let val = Math.min(aqi, 500); angle = segment * 5 + ((val - 300) / 200) * segment; } return Math.PI + angle; }
     const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 11} }, grid: { borderDash: [4, 4], color: '#f3f4f6' } } }, elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2.5, tension: 0.4 } } };
     
-    // Plugin Kim Đồng Hồ (ĐÃ SỬA VỊ TRÍ VÀ CHIỀU DÀI KIM)
+    // Plugin Kim Đồng Hồ 
     const gaugePlugin = { id: 'gaugeLabels', afterDraw: (chart) => { 
         const { ctx, width, height } = chart; const meta = chart.getDatasetMeta(0); 
         const cx = meta.data[0].x; const cy = meta.data[0].y; const outerR = meta.data[0].outerRadius; 
         let val = parseInt(document.getElementById('aqi-val').innerText) || 0; 
         const angle = calculateNeedleAngle(val); 
-        const needleLen = outerR - 45; // [SỬA] Rút ngắn kim
+        
+        // [SỬA 1] Làm kim ngắn lại (0.65 bán kính)
+        const needleLen = outerR * 0.65; 
 
         ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle); 
         ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6); 
@@ -273,14 +274,13 @@
         const numbers = [0, 50, 100, 150, 200, 300, 500]; const segmentAngle = Math.PI / 6; 
         ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; 
         
-        // [SỬA] Vị trí số (Đã căn chỉnh)
         const manualOffsets = [
             { r: 30, y: -5 },   // 0
-            { r: 24, y: 5 },   // 50 (Khoá)
+            { r: 24, y: 5 },   // 50 
             { r: 25, y: 15 },  // 100
-            { r: 10, y: 0 },  // 150 (Đỉnh)
+            { r: 10, y: 0 },  // 150 
             { r: 25, y: 15 },  // 200
-            { r: 24, y: 5 },   // 300 (Khoá)
+            { r: 24, y: 5 },   // 300 
             { r: 30, y: -5 }    // 500
         ]; 
         
@@ -296,7 +296,20 @@
     
     function init() { 
         const ctxG = document.getElementById('gaugeCanvas').getContext('2d'); 
-        gauge = new Chart(ctxG, { type: 'doughnut', data: { labels: [], datasets: [{ data: [1, 1, 1, 1, 1, 1], backgroundColor: AQI_COLORS, borderColor: '#ffffff', borderWidth: 2, cutout: '60%', circumference: 180, rotation: -90 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } } }, plugins: [gaugePlugin] }); 
+        gauge = new Chart(ctxG, { 
+            type: 'doughnut', 
+            data: { labels: [], datasets: [{ data: [1, 1, 1, 1, 1, 1], backgroundColor: AQI_COLORS, borderColor: '#ffffff', borderWidth: 2, cutout: '60%', circumference: 180, rotation: -90 }] }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false }, tooltip: { enabled: false } }, 
+                layout: { 
+                    // [SỬA 2] Thêm padding bottom: 50 để đẩy toàn bộ biểu đồ lên trên, tránh bị che tâm kim
+                    padding: { top: 25, left: 30, right: 30, bottom: 50 } 
+                } 
+            }, 
+            plugins: [gaugePlugin] 
+        }); 
         const mkChart = (id, color) => new Chart(document.getElementById(id), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color+'10', fill: true }] }, options: commonOptions }); 
         charts.temp = mkChart('cTemp', '#f59e0b'); charts.humi = mkChart('cHumi', '#3b82f6'); charts.pm = mkChart('cPM', '#10b981'); charts.co = mkChart('cCO', '#ef4444'); 
         fetchData(); setInterval(fetchData, 20000); setInterval(updateClock, 1000); updateClock(); 
@@ -319,12 +332,10 @@
         const min = Math.min(...values); 
         const max = Math.max(...values); 
         
-        // Gán giá trị vào Tiles
         document.getElementById('m-val').innerText = conf.field === 'pm' || conf.field === 'co' ? current.toFixed(1) : Math.round(current); 
         document.getElementById('m-max-tile').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max);
         document.getElementById('m-min-tile').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min);
         
-        // --- TẠO BẢNG SỐ LIỆU TUẦN ---
         const tableBody = document.getElementById('weeklyTable');
         let html = `<tr><th>Thứ</th><th>Trung bình (${conf.unit})</th></tr>`;
         
@@ -415,20 +426,20 @@
         if (ctrlMode.ac !== cloudACMode) { ctrlMode.ac = cloudACMode; updateBtnUI('btn-ac', ctrlMode.ac); }
         if (ctrlMode.fan !== cloudFanMode) { ctrlMode.fan = cloudFanMode; updateBtnUI('btn-fresh', ctrlMode.fan); }
         
-        // Cập nhật trạng thái thực tế (chỉ khi đang ở AUTO)
+        // Cập nhật trạng thái thực tế
         if (ctrlMode.ac === 0) {
             const btn = document.getElementById('btn-ac');
             const realTxtEl = document.getElementById('real-ac');
             if (realState.ac === 1) { btn.classList.add('auto-active'); realTxtEl.innerText = "(Đang chạy)"; } 
             else { btn.classList.remove('auto-active'); realTxtEl.innerText = "(Đang nghỉ)"; }
-        } else { document.getElementById('real-ac').innerText = ""; } // Ẩn khi Manual
+        } else { document.getElementById('real-ac').innerText = ""; } 
 
         if (ctrlMode.fan === 0) {
             const btn = document.getElementById('btn-fresh');
             const realTxtEl = document.getElementById('real-fan');
             if (realState.fan === 1) { btn.classList.add('auto-active'); realTxtEl.innerText = "(Đang chạy)"; } 
             else { btn.classList.remove('auto-active'); realTxtEl.innerText = "(Đang nghỉ)"; }
-        } else { document.getElementById('real-fan').innerText = ""; } // Ẩn khi Manual
+        } else { document.getElementById('real-fan').innerText = ""; } 
     }
     
     async function fetchData() {
@@ -440,11 +451,10 @@
             globalFeeds = data.feeds;
             const last = data.feeds[data.feeds.length-1];
             
-            // --- PHÁT HIỆN MẤT KẾT NỐI ---
             const lastTime = moment(last.created_at);
             const now = moment();
             const diffSeconds = now.diff(lastTime, 'seconds');
-            const MAX_OFFLINE_SECONDS = 180; // 3 phút
+            const MAX_OFFLINE_SECONDS = 180; 
             
             if (diffSeconds > MAX_OFFLINE_SECONDS) {
                 setStatus(false, `Mất kết nối! (${lastTime.fromNow()})`);
