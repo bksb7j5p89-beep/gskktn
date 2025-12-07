@@ -13,162 +13,84 @@
         * { box-sizing: border-box; }
 
         :root {
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --radius: 24px;
-            --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
-            
-            --aqi-height: 460px;   
-            --chart-height: 340px; 
-            --fixed-width: 1500px;
+            --bg-body: #f8fafc; --bg-card: #ffffff; --text-main: #1e293b; --text-sub: #64748b;
+            --radius: 24px; --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
+            --aqi-height: 460px; --chart-height: 340px; --fixed-width: 1500px;
             --primary-green: #10b981;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            margin: 0; padding: 40px;
-            min-width: var(--fixed-width);
-            overflow-x: auto; 
-        }
-
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 40px; min-width: var(--fixed-width); overflow-x: auto; }
         .container { width: var(--fixed-width); margin: 0 auto; position: relative; }
 
         /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         h1 { margin: 0; font-size: 32px; font-weight: 800; color: #0f172a; }
-        .status-badge {
-            background: #fff; padding: 10px 20px; border-radius: 99px;
-            box-shadow: var(--shadow); font-size: 1rem; font-weight: 600; color: var(--text-sub);
-            display: flex; align-items: center; gap: 10px; border: 1px solid #e2e8f0;
-        }
+        .status-badge { background: #fff; padding: 10px 20px; border-radius: 99px; box-shadow: var(--shadow); font-size: 1rem; font-weight: 600; color: var(--text-sub); display: flex; align-items: center; gap: 10px; border: 1px solid #e2e8f0; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .dot.ok { background: #10b981; animation: pulse 2s infinite; }
-        .dot.err { background: #ef4444; }
+        .dot.ok { background: #10b981; animation: pulse 2s infinite; } .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         /* MAIN GRID */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr var(--aqi-height); 
-            gap: 24px; align-items: start;
-        }
-
+        .main-grid { display: grid; grid-template-columns: 1fr var(--aqi-height); gap: 24px; align-items: start; }
         .left-col { display: flex; flex-direction: column; gap: 24px; }
 
         /* AQI CARD */
-        .aqi-card {
-            background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            padding: 0; position: relative; height: var(--aqi-height); 
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-        .card-label {
-            font-size: 1.2rem; font-weight: 700; color: var(--text-sub);
-            position: absolute; top: 20px; left: 25px; z-index: 10;
-        }
-        .gauge-section {
-            flex: 6; position: relative; display: flex; justify-content: center; align-items: flex-end;
-            padding-bottom: 10px; width: 100%;
-        }
+        .aqi-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0; position: relative; height: var(--aqi-height); display: flex; flex-direction: column; overflow: hidden; }
+        .card-label { font-size: 1.2rem; font-weight: 700; color: var(--text-sub); position: absolute; top: 20px; left: 25px; z-index: 10; }
+        .gauge-section { flex: 6; position: relative; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; width: 100%; }
         .gauge-wrapper { position: relative; width: 90%; height: 100%; }
         .info-section { flex: 4; display: flex; flex-direction: row; border-top: 1px solid #f1f5f9; }
-        .aqi-value-box {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            border-right: 1px solid #f1f5f9; background: #f8fafc50;
-        }
+        .aqi-value-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid #f1f5f9; background: #f8fafc50; }
         .aqi-number { font-size: 5.5rem; font-weight: 900; line-height: 1; color: #1e293b; letter-spacing: -2px; }
         .aqi-sub-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; margin-top: 5px; }
         .aqi-status-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .aqi-status-text { font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin: 0; line-height: 1.2; text-align: center; transition: color 0.3s ease; }
         .aqi-status-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
 
-        /* CHARTS GRID */
+        /* CHARTS */
         .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .chart-card {
-            background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            padding: 24px; height: var(--chart-height); 
-            display: flex; flex-direction: column; border: 1px solid #f1f5f9;
-        }
+        .chart-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; height: var(--chart-height); display: flex; flex-direction: column; border: 1px solid #f1f5f9; }
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* RIGHT COLUMN */
+        /* RIGHT COL */
         .right-column-container { display: flex; flex-direction: column; gap: 24px; }
-
-        /* 1. 4 WIDGETS CLICKABLE */
-        .right-col-grid {
-            height: var(--aqi-height); 
-            display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px;
-        }
-        .widget {
-            background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 15px; border: 1px solid #f1f5f9; aspect-ratio: 1/1; 
-            cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
-        }
-        .widget:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-color: var(--primary-green);
-        }
-        .widget:active { transform: scale(0.98); }
-
+        .right-col-grid { height: var(--aqi-height); display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
+        .widget { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 15px; border: 1px solid #f1f5f9; aspect-ratio: 1/1; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .widget:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--primary-green); }
         .w-icon { font-size: 2.5rem; margin-bottom: 10px; }
         .w-label { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
         .w-val { font-size: 2.8rem; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: #334155; }
         .w-unit { font-size: 1rem; font-weight: 600; color: #94a3b8; }
         .c-temp { color: #f59e0b; } .c-humi { color: #3b82f6; } .c-pm { color: #10b981; } .c-co { color: #ef4444; }
 
-        /* 2. CONTROL HUB */
-        .control-hub {
-            background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            height: var(--chart-height); 
-            display: flex; flex-direction: column; overflow: hidden; border: 1px solid #f1f5f9;
-        }
+        /* CONTROL HUB */
+        .control-hub { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); height: var(--chart-height); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #f1f5f9; }
         .hub-header { flex: 35; display: flex; border-bottom: 1px solid #e2e8f0; padding: 5px 0; }
         .hub-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hub-cell.separator { border-right: 1px solid #e2e8f0; }
         .time-display { font-size: 3.2rem; font-weight: 900; color: #1e293b; line-height: 1; letter-spacing: -2px; }
         .date-day { font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
         .date-full { font-size: 1.4rem; font-weight: 800; color: #334155; letter-spacing: -0.5px; }
-        
         .hub-buttons { flex: 65; display: flex; gap: 20px; padding: 20px; background: #f8fafc; }
         
-        .ctrl-btn {
-            flex: 1; background: #ffffff; border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s ease; user-select: none;
-        }
+        .ctrl-btn { flex: 1; background: #ffffff; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .ctrl-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        .ctrl-btn:active { transform: scale(0.98); }
-        
         .btn-icon-circle { width: 55px; height: 55px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; transition: 0.3s; }
         .btn-label { font-size: 1.1rem; font-weight: 800; color: #475569; }
         .btn-status { font-size: 0.9rem; font-weight: 700; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }
         
-        /* Trạng thái BẬT (Active) */
+        /* Trạng thái BẬT (Xanh) */
         .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
         .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
         .ctrl-btn.active .btn-label { color: #065f46; }
         .ctrl-btn.active .btn-status { color: var(--primary-green); }
 
-        /* Trạng thái Cưỡng chế TẮT (Manual OFF) */
-        .ctrl-btn.off-mode { border-color: #ef4444; background: #fff5f5; }
-        .ctrl-btn.off-mode .btn-icon-circle { background: #fee2e2; color: #ef4444; }
-        .ctrl-btn.off-mode .btn-label { color: #991b1b; }
-        .ctrl-btn.off-mode .btn-status { color: #ef4444; }
+        /* Trạng thái TẮT (Mặc định - Trắng Xám) */
+        .ctrl-btn.off-state { /* Không cần style đặc biệt, dùng mặc định */ }
 
-        /* 3. INSIGHT CARD */
-        .insight-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: var(--radius); box-shadow: var(--shadow);
-            height: var(--chart-height); padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: #fff; text-align: center; position: relative; overflow: hidden;
-        }
+        /* INSIGHT CARD */
+        .insight-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: var(--radius); box-shadow: var(--shadow); height: var(--chart-height); padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center; position: relative; overflow: hidden; }
         .insight-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; }
         .insight-card::after { content: ''; position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%; }
         .insight-icon { font-size: 4.5rem; margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
@@ -177,46 +99,26 @@
         .insight-status { font-size: 2.8rem; font-weight: 900; margin-bottom: 15px; line-height: 1.1; }
         .insight-desc { font-size: 1.1rem; line-height: 1.5; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 12px; font-weight: 500; }
 
-        /* --- MODAL CHI TIẾT --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);
-            z-index: 999; display: none; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 999; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.open { display: flex; opacity: 1; }
-
-        .modal-content {
-            background: #fff; width: 900px; max-width: 90%; border-radius: 32px;
-            padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative; animation: slideUp 0.3s ease;
-        }
+        .modal-content { background: #fff; width: 900px; max-width: 90%; border-radius: 32px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .m-title-group { display: flex; flex-direction: column; }
         .m-title { font-size: 1.5rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
         .m-value-big { font-size: 5rem; font-weight: 900; color: #1e293b; line-height: 1; margin-top: 5px; }
         .m-unit { font-size: 1.5rem; font-weight: 600; color: #94a3b8; }
-
-        .btn-back {
-            background: #f1f5f9; border: none; padding: 12px 24px; border-radius: 99px;
-            font-size: 1rem; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .btn-back { background: #f1f5f9; border: none; padding: 12px 24px; border-radius: 99px; font-size: 1rem; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-back:hover { background: #e2e8f0; color: #1e293b; }
-
         .modal-body { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; }
-        
         .stat-box { background: #f8fafc; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
         .stat-row { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
         .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
         .stat-label { font-size: 1.1rem; font-weight: 600; color: #64748b; }
         .stat-val { font-size: 2rem; font-weight: 800; color: #334155; }
-
         .chart-section { height: 350px; background: #fff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 20px; }
         .chart-title { font-size: 1rem; font-weight: 700; color: #94a3b8; margin-bottom: 15px; display: block; }
-
     </style>
 </head>
 <body>
@@ -224,10 +126,7 @@
 <div class="container">
     <div class="header">
         <h1>Phòng Khách</h1>
-        <div class="status-badge">
-            <div id="led" class="dot ok"></div>
-            <span id="status">Đang kết nối...</span>
-        </div>
+        <div class="status-badge"><div id="led" class="dot ok"></div><span id="status">Đang kết nối...</span></div>
     </div>
 
     <div class="main-grid">
@@ -250,22 +149,10 @@
 
         <div class="right-column-container">
             <div class="right-col-grid">
-                <div class="widget" onclick="openDetail('temp')">
-                    <div class="w-icon">🌡️</div><div class="w-label">Nhiệt độ</div>
-                    <div class="w-val c-temp" id="v-temp">--</div><div class="w-unit">°C</div>
-                </div>
-                <div class="widget" onclick="openDetail('humi')">
-                    <div class="w-icon">💧</div><div class="w-label">Độ ẩm</div>
-                    <div class="w-val c-humi" id="v-humi">--</div><div class="w-unit">%</div>
-                </div>
-                <div class="widget" onclick="openDetail('pm')">
-                    <div class="w-icon">🌫️</div><div class="w-label">Bụi PM2.5</div>
-                    <div class="w-val c-pm" id="v-pm">--</div><div class="w-unit">µg/m³</div>
-                </div>
-                <div class="widget" onclick="openDetail('co')">
-                    <div class="w-icon">🏭</div><div class="w-label">Khí CO</div>
-                    <div class="w-val c-co" id="v-co">--</div><div class="w-unit">ppm</div>
-                </div>
+                <div class="widget" onclick="openDetail('temp')"><div class="w-icon">🌡️</div><div class="w-label">Nhiệt độ</div><div class="w-val c-temp" id="v-temp">--</div><div class="w-unit">°C</div></div>
+                <div class="widget" onclick="openDetail('humi')"><div class="w-icon">💧</div><div class="w-label">Độ ẩm</div><div class="w-val c-humi" id="v-humi">--</div><div class="w-unit">%</div></div>
+                <div class="widget" onclick="openDetail('pm')"><div class="w-icon">🌫️</div><div class="w-label">Bụi PM2.5</div><div class="w-val c-pm" id="v-pm">--</div><div class="w-unit">µg/m³</div></div>
+                <div class="widget" onclick="openDetail('co')"><div class="w-icon">🏭</div><div class="w-label">Khí CO</div><div class="w-val c-co" id="v-co">--</div><div class="w-unit">ppm</div></div>
             </div>
 
             <div class="control-hub">
@@ -274,16 +161,8 @@
                     <div class="hub-cell"><div class="date-day" id="clock-day">--</div><div class="date-full" id="clock-date">--/--/----</div></div>
                 </div>
                 <div class="hub-buttons">
-                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')">
-                        <div class="btn-icon-circle">❄️</div>
-                        <div class="btn-label">Điều Hoà</div>
-                        <div class="btn-status">TẮT</div>
-                    </div>
-                    <div class="ctrl-btn" id="btn-fresh" onclick="toggleBtn('btn-fresh')">
-                        <div class="btn-icon-circle">🍃</div>
-                        <div class="btn-label">Khí Tươi</div>
-                        <div class="btn-status">TẮT</div>
-                    </div>
+                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')"><div class="btn-icon-circle">❄️</div><div class="btn-label">Điều Hoà</div><div class="btn-status">TẮT</div></div>
+                    <div class="ctrl-btn" id="btn-fresh" onclick="toggleBtn('btn-fresh')"><div class="btn-icon-circle">🍃</div><div class="btn-label">Khí Tươi</div><div class="btn-status">TẮT</div></div>
                 </div>
             </div>
 
@@ -300,31 +179,15 @@
 <div class="modal-overlay" id="detailModal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="m-title-group">
-                <div class="m-title" id="m-title">Nhiệt độ</div>
-                <div class="m-value-big"><span id="m-val">--</span> <span class="m-unit" id="m-unit">°C</span></div>
-            </div>
-            <button class="btn-back" onclick="closeDetail()">
-                ⬅ Quay lại
-            </button>
+            <div class="m-title-group"><div class="m-title" id="m-title">Nhiệt độ</div><div class="m-value-big"><span id="m-val">--</span> <span class="m-unit" id="m-unit">°C</span></div></div>
+            <button class="btn-back" onclick="closeDetail()">⬅ Quay lại</button>
         </div>
-        
         <div class="modal-body">
             <div class="stat-box">
-                <div class="stat-row">
-                    <div class="stat-label">Thấp nhất hôm nay</div>
-                    <div class="stat-val" style="color:#3b82f6" id="m-min">--</div>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-label">Cao nhất hôm nay</div>
-                    <div class="stat-val" style="color:#ef4444" id="m-max">--</div>
-                </div>
+                <div class="stat-row"><div class="stat-label">Thấp nhất hôm nay</div><div class="stat-val" style="color:#3b82f6" id="m-min">--</div></div>
+                <div class="stat-row"><div class="stat-label">Cao nhất hôm nay</div><div class="stat-val" style="color:#ef4444" id="m-max">--</div></div>
             </div>
-            
-            <div class="chart-section">
-                <span class="chart-title">BIỂU ĐỒ TUẦN (7 ngày qua)</span>
-                <canvas id="weeklyChart"></canvas>
-            </div>
+            <div class="chart-section"><span class="chart-title">BIỂU ĐỒ TUẦN (7 ngày qua)</span><canvas id="weeklyChart"></canvas></div>
         </div>
     </div>
 </div>
@@ -332,231 +195,80 @@
 <script>
     const CONFIG = {
         ID: '3195067',
-        READ_KEY: '5NY52VK6EWBE41LC',  // Key Đọc
-        WRITE_KEY: 'H0ARO2KSFH415ZDX', // Key Ghi (Gửi lệnh)
+        READ_KEY: '5NY52VK6EWBE41LC', // Key Đọc
+        WRITE_KEY: 'H0ARO2KSFH415ZDX', // Key Ghi (Đã cập nhật theo key bạn cung cấp)
         MAP: { aqi: 'field1', pm: 'field2', co: 'field3', temp: 'field4', humi: 'field5' }
     };
 
-    let charts = {};
-    let gauge;
-    let detailChart = null; 
-    let globalFeeds = [];
+    let charts = {}; let gauge; let detailChart = null; let globalFeeds = [];
     
-    // Biến lưu trạng thái điều khiển trên Web (0: Auto, 1: On, 2: Off)
-    let ctrlState = { ac: 0, fan: 0 }; 
+    // Lưu trạng thái thực tế từ ESP (0: Tắt, 1: Bật)
+    let realState = { ac: 0, fan: 0 }; 
 
+    /* --- CHART CONFIGS & HELPERS (Giữ nguyên) --- */
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
-
-    /* --- HELPERS --- */
-    function getColorForAQI(aqi) {
-        if (aqi <= 50) return AQI_COLORS[0]; if (aqi <= 100) return AQI_COLORS[1]; if (aqi <= 150) return AQI_COLORS[2];
-        if (aqi <= 200) return AQI_COLORS[3]; if (aqi <= 300) return AQI_COLORS[4]; return AQI_COLORS[5];
-    }
-    function getTextForAQI(aqi) {
-        if (aqi <= 50) return "Tốt"; if (aqi <= 100) return "Trung bình"; if (aqi <= 150) return "Kém";
-        if (aqi <= 200) return "Xấu"; if (aqi <= 300) return "Rất xấu"; return "Nguy hại";
-    }
-    function calculateNeedleAngle(aqi) {
-        const segment = Math.PI / 6; let angle = 0;
-        if (aqi <= 50) angle = (aqi / 50) * segment;
-        else if (aqi <= 100) angle = segment + ((aqi - 50) / 50) * segment;
-        else if (aqi <= 150) angle = segment * 2 + ((aqi - 100) / 50) * segment;
-        else if (aqi <= 200) angle = segment * 3 + ((aqi - 150) / 50) * segment;
-        else if (aqi <= 300) angle = segment * 4 + ((aqi - 200) / 100) * segment;
-        else { let val = Math.min(aqi, 500); angle = segment * 5 + ((val - 300) / 200) * segment; }
-        return Math.PI + angle;
-    }
-
-    /* --- CHARTS --- */
-    const commonOptions = {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { display: false }, y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 11} }, grid: { borderDash: [4, 4], color: '#f3f4f6' } } },
-        elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2.5, tension: 0.4 } }
-    };
-
-    const gaugePlugin = {
-        id: 'gaugeLabels',
-        afterDraw: (chart) => {
-            const { ctx, width, height } = chart; 
-            const meta = chart.getDatasetMeta(0);
-            const cx = meta.data[0].x; 
-            const cy = meta.data[0].y;
-            const outerR = meta.data[0].outerRadius;
-            let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
-            const angle = calculateNeedleAngle(val); const needleLen = outerR - 5; 
-            ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
-            ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6);
-            ctx.fillStyle = '#1e293b'; ctx.fill();
-            ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
-            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
-            ctx.restore();
-            const numbers = [0, 50, 100, 150, 200, 300, 500]; const segmentAngle = Math.PI / 6;
-            ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            const manualOffsets = [{ r: 34, y: 0 }, { r: 24, y: 5 }, { r: 15, y: 15 }, { r: 8, y: 20 }, { r: 15, y: 15 }, { r: 24, y: 5 }, { r: 34, y: 0 }];
-            numbers.forEach((num, i) => {
-                const numAngle = Math.PI + (i * segmentAngle); const offset = manualOffsets[i];
-                const rNum = outerR + offset.r; 
-                const nx = cx + Math.cos(numAngle) * rNum; const ny = cy + Math.sin(numAngle) * rNum + offset.y;
-                ctx.fillText(num, nx, ny);
-            });
-        }
-    };
-
-    function init() {
-        const ctxG = document.getElementById('gaugeCanvas').getContext('2d');
-        gauge = new Chart(ctxG, {
-            type: 'doughnut',
-            data: { labels: [], datasets: [{ data: [1, 1, 1, 1, 1, 1], backgroundColor: AQI_COLORS, borderColor: '#ffffff', borderWidth: 2, cutout: '60%', circumference: 180, rotation: -90 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } } },
-            plugins: [gaugePlugin]
-        });
-
-        const mkChart = (id, color) => new Chart(document.getElementById(id), {
-            type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color+'10', fill: true }] }, options: commonOptions
-        });
-        charts.temp = mkChart('cTemp', '#f59e0b');
-        charts.humi = mkChart('cHumi', '#3b82f6');
-        charts.pm = mkChart('cPM', '#10b981');
-        charts.co = mkChart('cCO', '#ef4444');
-
-        fetchData(); setInterval(fetchData, 20000);
-        setInterval(updateClock, 1000); updateClock();
-    }
-
-    /* --- MODAL LOGIC --- */
-    const detailConfig = {
-        'temp': { title: 'Nhiệt độ', unit: '°C', field: 'temp', color: '#f59e0b' },
-        'humi': { title: 'Độ ẩm', unit: '%', field: 'humi', color: '#3b82f6' },
-        'pm':   { title: 'Bụi PM2.5', unit: 'µg/m³', field: 'pm', color: '#10b981' },
-        'co':   { title: 'Khí CO', unit: 'ppm', field: 'co', color: '#ef4444' }
-    };
-
-    function openDetail(type) {
-        if (!globalFeeds.length) return;
-        const conf = detailConfig[type];
-        const modal = document.getElementById('detailModal');
-        const fieldKey = CONFIG.MAP[conf.field]; 
-
-        document.getElementById('m-title').innerText = conf.title;
-        document.getElementById('m-unit').innerText = conf.unit;
-        
-        const values = globalFeeds.map(f => parseFloat(f[fieldKey])).filter(v => !isNaN(v));
-        const current = values[values.length - 1];
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-
-        document.getElementById('m-val').innerText = conf.field === 'pm' || conf.field === 'co' ? current.toFixed(1) : Math.round(current);
-        document.getElementById('m-min').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min);
-        document.getElementById('m-max').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max);
-
-        const labels = [];
-        const data = [];
-        for(let i=6; i>=0; i--) {
-            labels.push(moment().subtract(i, 'days').format('dddd')); 
-            let randomVar = current * (0.9 + Math.random() * 0.2);
-            data.push(randomVar);
-        }
-
-        const ctx = document.getElementById('weeklyChart').getContext('2d');
-        if(detailChart) detailChart.destroy(); 
-
-        detailChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: conf.color,
-                    borderRadius: 8,
-                    barThickness: 40
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { grid: { borderDash: [4, 4] } }, x: { grid: { display: false } } }
-            }
-        });
-        modal.classList.add('open');
-    }
-
+    function getColorForAQI(aqi) { if (aqi <= 50) return AQI_COLORS[0]; if (aqi <= 100) return AQI_COLORS[1]; if (aqi <= 150) return AQI_COLORS[2]; if (aqi <= 200) return AQI_COLORS[3]; if (aqi <= 300) return AQI_COLORS[4]; return AQI_COLORS[5]; }
+    function getTextForAQI(aqi) { if (aqi <= 50) return "Tốt"; if (aqi <= 100) return "Trung bình"; if (aqi <= 150) return "Kém"; if (aqi <= 200) return "Xấu"; if (aqi <= 300) return "Rất xấu"; return "Nguy hại"; }
+    function calculateNeedleAngle(aqi) { const segment = Math.PI / 6; let angle = 0; if (aqi <= 50) angle = (aqi / 50) * segment; else if (aqi <= 100) angle = segment + ((aqi - 50) / 50) * segment; else if (aqi <= 150) angle = segment * 2 + ((aqi - 100) / 50) * segment; else if (aqi <= 200) angle = segment * 3 + ((aqi - 150) / 50) * segment; else if (aqi <= 300) angle = segment * 4 + ((aqi - 200) / 100) * segment; else { let val = Math.min(aqi, 500); angle = segment * 5 + ((val - 300) / 200) * segment; } return Math.PI + angle; }
+    const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 11} }, grid: { borderDash: [4, 4], color: '#f3f4f6' } } }, elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2.5, tension: 0.4 } } };
+    const gaugePlugin = { id: 'gaugeLabels', afterDraw: (chart) => { const { ctx, width, height } = chart; const meta = chart.getDatasetMeta(0); const cx = meta.data[0].x; const cy = meta.data[0].y; const outerR = meta.data[0].outerRadius; let val = parseInt(document.getElementById('aqi-val').innerText) || 0; const angle = calculateNeedleAngle(val); const needleLen = outerR - 5; ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle); ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6); ctx.fillStyle = '#1e293b'; ctx.fill(); ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); const numbers = [0, 50, 100, 150, 200, 300, 500]; const segmentAngle = Math.PI / 6; ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; const manualOffsets = [{ r: 34, y: 0 }, { r: 24, y: 5 }, { r: 15, y: 15 }, { r: 8, y: 20 }, { r: 15, y: 15 }, { r: 24, y: 5 }, { r: 34, y: 0 }]; numbers.forEach((num, i) => { const numAngle = Math.PI + (i * segmentAngle); const offset = manualOffsets[i]; const rNum = outerR + offset.r; const nx = cx + Math.cos(numAngle) * rNum; const ny = cy + Math.sin(numAngle) * rNum + offset.y; ctx.fillText(num, nx, ny); }); } };
+    function init() { const ctxG = document.getElementById('gaugeCanvas').getContext('2d'); gauge = new Chart(ctxG, { type: 'doughnut', data: { labels: [], datasets: [{ data: [1, 1, 1, 1, 1, 1], backgroundColor: AQI_COLORS, borderColor: '#ffffff', borderWidth: 2, cutout: '60%', circumference: 180, rotation: -90 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } } }, plugins: [gaugePlugin] }); const mkChart = (id, color) => new Chart(document.getElementById(id), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color+'10', fill: true }] }, options: commonOptions }); charts.temp = mkChart('cTemp', '#f59e0b'); charts.humi = mkChart('cHumi', '#3b82f6'); charts.pm = mkChart('cPM', '#10b981'); charts.co = mkChart('cCO', '#ef4444'); fetchData(); setInterval(fetchData, 20000); setInterval(updateClock, 1000); updateClock(); }
+    const detailConfig = { 'temp': { title: 'Nhiệt độ', unit: '°C', field: 'temp', color: '#f59e0b' }, 'humi': { title: 'Độ ẩm', unit: '%', field: 'humi', color: '#3b82f6' }, 'pm': { title: 'Bụi PM2.5', unit: 'µg/m³', field: 'pm', color: '#10b981' }, 'co': { title: 'Khí CO', unit: 'ppm', field: 'co', color: '#ef4444' } };
+    function openDetail(type) { if (!globalFeeds.length) return; const conf = detailConfig[type]; const modal = document.getElementById('detailModal'); const fieldKey = CONFIG.MAP[conf.field]; document.getElementById('m-title').innerText = conf.title; document.getElementById('m-unit').innerText = conf.unit; const values = globalFeeds.map(f => parseFloat(f[fieldKey])).filter(v => !isNaN(v)); const current = values[values.length - 1]; const min = Math.min(...values); const max = Math.max(...values); document.getElementById('m-val').innerText = conf.field === 'pm' || conf.field === 'co' ? current.toFixed(1) : Math.round(current); document.getElementById('m-min').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min); document.getElementById('m-max').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max); const labels = []; const data = []; for(let i=6; i>=0; i--) { labels.push(moment().subtract(i, 'days').format('dddd')); let randomVar = current * (0.9 + Math.random() * 0.2); data.push(randomVar); } const ctx = document.getElementById('weeklyChart').getContext('2d'); if(detailChart) detailChart.destroy(); detailChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ data: data, backgroundColor: conf.color, borderRadius: 8, barThickness: 40 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { borderDash: [4, 4] } }, x: { grid: { display: false } } } } }); modal.classList.add('open'); }
     function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
+    function updateClock() { const now = moment(); now.locale('vi'); document.getElementById('clock-time').innerText = now.format('HH:mm'); document.getElementById('clock-day').innerText = now.format('dddd'); document.getElementById('clock-date').innerText = now.format('DD/MM/YYYY'); }
+    function updateInsight(temp, humi, aqi) { const iconEl = document.getElementById('insight-icon'); const statusEl = document.getElementById('insight-status'); const msgEl = document.getElementById('insight-msg'); if (aqi > 150) { iconEl.innerText = "😷"; statusEl.innerText = "Ô nhiễm"; msgEl.innerText = "Không khí xấu. Bật máy lọc ngay."; } else if (temp > 30) { iconEl.innerText = "🥵"; statusEl.innerText = "Quá nóng"; msgEl.innerText = "Nhiệt độ cao. Cân nhắc bật điều hòa."; } else if (humi > 80) { iconEl.innerText = "💧"; statusEl.innerText = "Ẩm ướt"; msgEl.innerText = "Độ ẩm cao. Bật chế độ hút ẩm."; } else if (temp < 18) { iconEl.innerText = "🥶"; statusEl.innerText = "Lạnh"; msgEl.innerText = "Trời lạnh. Đóng cửa sổ để giữ ấm."; } else { iconEl.innerText = "😊"; statusEl.innerText = "Thoải mái"; msgEl.innerText = "Điều kiện tuyệt vời! Tận hưởng không gian sống."; } }
 
-    /* --- SYSTEM LOGIC --- */
-    function updateClock() {
-        const now = moment(); now.locale('vi'); 
-        document.getElementById('clock-time').innerText = now.format('HH:mm');
-        document.getElementById('clock-day').innerText = now.format('dddd');
-        document.getElementById('clock-date').innerText = now.format('DD/MM/YYYY');
-    }
-
-    function updateInsight(temp, humi, aqi) {
-        const iconEl = document.getElementById('insight-icon');
-        const statusEl = document.getElementById('insight-status');
-        const msgEl = document.getElementById('insight-msg');
-        if (aqi > 150) { iconEl.innerText = "😷"; statusEl.innerText = "Ô nhiễm"; msgEl.innerText = "Không khí xấu. Bật máy lọc ngay."; } 
-        else if (temp > 30) { iconEl.innerText = "🥵"; statusEl.innerText = "Quá nóng"; msgEl.innerText = "Nhiệt độ cao. Cân nhắc bật điều hòa."; } 
-        else if (humi > 80) { iconEl.innerText = "💧"; statusEl.innerText = "Ẩm ướt"; msgEl.innerText = "Độ ẩm cao. Bật chế độ hút ẩm."; } 
-        else if (temp < 18) { iconEl.innerText = "🥶"; statusEl.innerText = "Lạnh"; msgEl.innerText = "Trời lạnh. Đóng cửa sổ để giữ ấm."; } 
-        else { iconEl.innerText = "😊"; statusEl.innerText = "Thoải mái"; msgEl.innerText = "Điều kiện tuyệt vời! Tận hưởng không gian sống."; }
-    }
-
-    /* --- [MỚI] TÍNH NĂNG GỬI LỆNH ĐIỀU KHIỂN --- */
+    /* --- [LOGIC ĐIỀU KHIỂN BẬT/TẮT GIẢN LƯỢC] --- */
     async function toggleBtn(id) {
         const btn = document.getElementById(id);
         const statusEl = btn.querySelector('.btn-status');
         const isAC = id === 'btn-ac';
-        let currentVal = isAC ? ctrlState.ac : ctrlState.fan;
         
-        // Logic điều khiển: 
-        // 0 (Auto) hoặc 2 (Off) -> Bấm thì thành 1 (Manual ON)
-        // 1 (On) -> Bấm thì thành 2 (Manual OFF)
-        let newVal = (currentVal === 0 || currentVal === 2) ? 1 : 2;
-
-        if (isAC) ctrlState.ac = newVal; 
-        else ctrlState.fan = newVal;
+        // 1. Kiểm tra trạng thái THỰC (Real State) hiện tại
+        let currentState = isAC ? realState.ac : realState.fan; 
         
-        // Cập nhật giao diện ngay lập tức (phản hồi giả)
-        updateBtnUI(id, newVal);
+        // 2. Quyết định lệnh gửi đi (Toggle logic)
+        // Nếu đang Tắt (0) -> Gửi 1 (Bật)
+        // Nếu đang Bật (1) -> Gửi 2 (Tắt)
+        let newVal = (currentState === 0) ? 1 : 2; 
+        
+        // 3. Cập nhật UI tạm thời (Phản hồi nhanh)
+        updateBtnUI(id, newVal === 1);
         statusEl.innerText = "Đang gửi...";
 
+        // 4. Gửi lệnh
         const field = isAC ? 'field6' : 'field7';
         try {
-            // Gửi lệnh lên ThingSpeak
             const url = `https://api.thingspeak.com/update?api_key=${CONFIG.WRITE_KEY}&${field}=${newVal}`;
-            // fetch 'no-cors' để tránh lỗi CORS khi chạy local, thực tế lệnh vẫn đi
             await fetch(url, {mode: 'no-cors'});
             
-            // Cập nhật text sau khi gửi
-            statusEl.innerText = newVal === 1 ? "BẬT (M)" : "TẮT (M)";
+            // Text phản hồi sau khi gửi
+            statusEl.innerText = (newVal === 1) ? "BẬT" : "TẮT";
         } catch(e) {
             console.error(e);
             statusEl.innerText = "Lỗi";
         }
     }
 
-    function updateBtnUI(id, val) {
+    // Hàm cập nhật màu nút
+    function updateBtnUI(id, isOn) {
         const btn = document.getElementById(id);
         const statusEl = btn.querySelector('.btn-status');
         
-        // Reset class
-        btn.className = 'ctrl-btn'; 
+        // Xóa hết class cũ
+        btn.classList.remove('active', 'off-state');
         
-        if (val === 1) { // ON
-            btn.classList.add('active'); 
-        } else if (val === 2) { // OFF
-            btn.classList.add('off-mode');
-        } else { // AUTO (0)
-            // Mặc định màu trắng
+        if (isOn) {
+            btn.classList.add('active'); // Xanh
+            statusEl.innerText = "BẬT";
+        } else {
+            // Mặc định màu trắng (Tắt)
+            statusEl.innerText = "TẮT";
         }
     }
 
-    function setStatus(ok, msg) {
-        document.getElementById('status').innerText = msg;
-        document.getElementById('led').className = ok ? 'dot ok' : 'dot err';
-    }
-
+    function setStatus(ok, msg) { document.getElementById('status').innerText = msg; document.getElementById('led').className = ok ? 'dot ok' : 'dot err'; }
     function updateView(last, feeds) {
         const aqi = Math.round(last[CONFIG.MAP.aqi] || 0);
         const temp = Math.round(last[CONFIG.MAP.temp] || 0);
@@ -564,60 +276,26 @@
         const pm = parseFloat(last[CONFIG.MAP.pm] || 0).toFixed(1);
         const co = parseFloat(last[CONFIG.MAP.co] || 0).toFixed(1);
         const color = getColorForAQI(aqi);
-        
         document.getElementById('aqi-val').innerText = aqi; 
         const txtEl = document.getElementById('aqi-text'); txtEl.innerText = getTextForAQI(aqi); txtEl.style.color = color;
-        document.getElementById('v-temp').innerText = temp; document.getElementById('v-humi').innerText = humi; 
-        document.getElementById('v-pm').innerText = pm; document.getElementById('v-co').innerText = co;
-
-        gauge.update();
-        updateInsight(temp, humi, aqi);
-
+        document.getElementById('v-temp').innerText = temp; document.getElementById('v-humi').innerText = humi; document.getElementById('v-pm').innerText = pm; document.getElementById('v-co').innerText = co;
+        gauge.update(); updateInsight(temp, humi, aqi);
         const labels = feeds.map(f => moment(f.created_at).format('HH:mm'));
-        const upd = (k, f) => {
-            charts[k].data.labels = labels;
-            charts[k].data.datasets[0].data = feeds.map(x => x[f]);
-            charts[k].update();
-        };
-        upd('temp', CONFIG.MAP.temp); upd('humi', CONFIG.MAP.humi);
-        upd('pm', CONFIG.MAP.pm); upd('co', CONFIG.MAP.co);
+        const upd = (k, f) => { charts[k].data.labels = labels; charts[k].data.datasets[0].data = feeds.map(x => x[f]); charts[k].update(); };
+        upd('temp', CONFIG.MAP.temp); upd('humi', CONFIG.MAP.humi); upd('pm', CONFIG.MAP.pm); upd('co', CONFIG.MAP.co);
 
-        /* --- [MỚI] ĐỌC PHẢN HỒI TỪ ESP32 (FIELD 8) --- */
-        // ESP gửi lên Field 8 theo mã: (AC_State * 10) + Fan_State
-        // Ví dụ: 11 (AC On, Fan On), 10 (AC On, Fan Off), 01 (AC Off, Fan On)
+        /* --- [MỚI] CẬP NHẬT TRẠNG THÁI TỪ ESP (Field 8) --- */
+        // ESP gửi: (AC*10 + Fan). VD: 11 (Cả 2 bật), 10 (AC bật, Fan tắt)
         const statusVal = parseInt(last['field8'] || 0);
-        const isACOn = Math.floor(statusVal / 10) === 1;
-        const isFanOn = (statusVal % 10) === 1;
+        realState.ac = Math.floor(statusVal / 10);
+        realState.fan = statusVal % 10;
 
-        // Nếu người dùng đang để chế độ AUTO (0) trên Web, 
-        // thì cập nhật giao diện theo trạng thái thực tế từ ESP
-        if (ctrlState.ac === 0) {
-            // Nếu ESP báo đang chạy -> Hiển thị Xanh, ngược lại Trắng
-            updateBtnUI('btn-ac', isACOn ? 1 : 0);
-            document.querySelector('#btn-ac .btn-status').innerText = isACOn ? "AUTO (BẬT)" : "AUTO (TẮT)";
-        }
-        
-        if (ctrlState.fan === 0) {
-            updateBtnUI('btn-fresh', isFanOn ? 1 : 0);
-            document.querySelector('#btn-fresh .btn-status').innerText = isFanOn ? "AUTO (BẬT)" : "AUTO (TẮT)";
-        }
+        // Cập nhật giao diện theo trạng thái thực tế
+        updateBtnUI('btn-ac', realState.ac === 1);
+        updateBtnUI('btn-fresh', realState.fan === 1);
     }
-
-    async function fetchData() {
-        try {
-            const res = await fetch(`https://api.thingspeak.com/channels/${CONFIG.ID}/feeds.json?api_key=${CONFIG.READ_KEY}&results=20&timezone=Asia/Ho_Chi_Minh`);
-            if(!res.ok) throw new Error();
-            const data = await res.json();
-            if(!data.feeds.length) { setStatus(true, "Đang chờ dữ liệu..."); return; }
-            globalFeeds = data.feeds;
-            const last = data.feeds[data.feeds.length-1];
-            updateView(last, data.feeds);
-            setStatus(true, `Cập nhật: ${moment(last.created_at).format('HH:mm:ss DD/MM')}`);
-        } catch(e) { setStatus(false, "Mất kết nối!"); }
-    }
-
+    async function fetchData() { try { const res = await fetch(`https://api.thingspeak.com/channels/${CONFIG.ID}/feeds.json?api_key=${CONFIG.READ_KEY}&results=20&timezone=Asia/Ho_Chi_Minh`); if(!res.ok) throw new Error(); const data = await res.json(); if(!data.feeds.length) { setStatus(true, "Đang chờ dữ liệu..."); return; } globalFeeds = data.feeds; const last = data.feeds[data.feeds.length-1]; updateView(last, data.feeds); setStatus(true, `Cập nhật: ${moment(last.created_at).format('HH:mm:ss DD/MM')}`); } catch(e) { setStatus(false, "Mất kết nối!"); } }
     window.onload = init;
 </script>
-
 </body>
 </html>
