@@ -13,9 +13,16 @@
         * { box-sizing: border-box; }
 
         :root {
-            --bg-body: #f8fafc; --bg-card: #ffffff; --text-main: #1e293b; --text-sub: #64748b;
-            --radius: 24px; --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
-            --aqi-height: 460px; --chart-height: 340px; --fixed-width: 1500px;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --radius: 24px;
+            --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
+            
+            --aqi-height: 460px;   
+            --chart-height: 340px; 
+            --fixed-width: 1500px;
             --primary-green: #10b981;
         }
 
@@ -27,8 +34,7 @@
         h1 { margin: 0; font-size: 32px; font-weight: 800; color: #0f172a; }
         .status-badge { background: #fff; padding: 10px 20px; border-radius: 99px; box-shadow: var(--shadow); font-size: 1rem; font-weight: 600; color: var(--text-sub); display: flex; align-items: center; gap: 10px; border: 1px solid #e2e8f0; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .dot.ok { background: #10b981; animation: pulse 2s infinite; } 
-        .dot.err { background: #ef4444; }
+        .dot.ok { background: #10b981; animation: pulse 2s infinite; } .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         /* MAIN GRID */
@@ -54,7 +60,7 @@
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* RIGHT COLUMN */
+        /* RIGHT COL */
         .right-column-container { display: flex; flex-direction: column; gap: 24px; }
         .right-col-grid { height: var(--aqi-height); display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
         .widget { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 15px; border: 1px solid #f1f5f9; aspect-ratio: 1/1; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
@@ -74,11 +80,8 @@
         .date-day { font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
         .date-full { font-size: 1.4rem; font-weight: 800; color: #334155; letter-spacing: -0.5px; }
         .hub-buttons { flex: 65; display: flex; gap: 20px; padding: 20px; background: #f8fafc; }
-        
-        /* Button Styles */
         .ctrl-btn { flex: 1; background: #ffffff; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; user-select: none; }
         .ctrl-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        .ctrl-btn:active { transform: scale(0.98); }
         .btn-icon-circle { width: 55px; height: 55px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; transition: 0.3s; }
         .btn-label { font-size: 1.1rem; font-weight: 800; color: #475569; }
         .btn-status { font-size: 0.9rem; font-weight: 700; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }
@@ -86,7 +89,7 @@
 
         /* Button States */
         .ctrl-btn.auto-mode { border-color: #e2e8f0; background: #ffffff; }
-        .ctrl-btn.auto-mode .btn-icon-circle { background: #f1f5f9; color: #334155; }
+        .ctrl-btn.auto-mode .btn-icon-circle { background: #f1f5f9; color: #64748b; }
         .ctrl-btn.auto-active { border-color: var(--primary-green); background: #f0fdf4; }
         .ctrl-btn.auto-active .btn-icon-circle { background: #d1fae5; color: var(--primary-green); }
         .ctrl-btn.auto-active .btn-status { color: var(--primary-green); font-weight: 800; }
@@ -99,7 +102,7 @@
         .ctrl-btn.manual-off .btn-label { color: #991b1b; }
         .ctrl-btn.manual-off .btn-status { color: #ef4444; }
 
-        /* INSIGHT CARD */
+        /* 3. INSIGHT CARD */
         .insight-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: var(--radius); box-shadow: var(--shadow); height: var(--chart-height); padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center; position: relative; overflow: hidden; }
         .insight-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; }
         .insight-card::after { content: ''; position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%; }
@@ -122,12 +125,18 @@
         .btn-back { background: #f1f5f9; border: none; padding: 12px 24px; border-radius: 99px; font-size: 1rem; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-back:hover { background: #e2e8f0; color: #1e293b; }
         
+        /* [SỬA] Cấu trúc Min/Max */
         .modal-body { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; }
-        .stat-box { background: #f8fafc; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
-        .stat-row { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
-        .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
-        .stat-label { font-size: 1.1rem; font-weight: 600; color: #64748b; }
-        .stat-val { font-size: 2rem; font-weight: 800; color: #334155; }
+        .stat-box { display: flex; flex-direction: column; gap: 20px; padding: 0; background: none; }
+        
+        .stat-tile { flex: 1; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .tile-label { font-size: 0.85rem; font-weight: 700; opacity: 0.7; }
+        .tile-value { font-size: 4rem; font-weight: 900; line-height: 1; }
+        
+        .max-val { background: #fff5f5; border: 2px solid #ef4444; color: #ef4444; }
+        .min-val { background: #dcfce7; border: 2px solid #10b981; color: #10b981; }
+        .min-val .tile-label, .max-val .tile-label { color: inherit; opacity: 0.7; }
+
 
         /* TABLE STYLE (NEW) */
         .table-section { background: #fff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; }
@@ -137,9 +146,6 @@
         .weekly-table td { padding: 12px 10px; font-weight: 700; color: #334155; border-bottom: 1px solid #f1f5f9; }
         .weekly-table tr:last-child td { border-bottom: none; }
         .weekly-table tr:nth-child(even) { background-color: #f8fafc; }
-        .diff-tag { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 10px; }
-        .diff-up { background: #fee2e2; color: #ef4444; }
-        .diff-down { background: #dcfce7; color: #166534; }
     </style>
 </head>
 <body>
@@ -183,10 +189,12 @@
                 </div>
                 <div class="hub-buttons">
                     <div class="ctrl-btn auto-mode" id="btn-ac" onclick="toggleBtn('btn-ac')">
-                        <div class="btn-icon-circle">❄️</div><div class="btn-label">Điều Hoà</div><div class="btn-status">AUTO</div><div class="btn-real-status" id="real-ac">(--)</div>
+                        <div class="btn-icon-circle">❄️</div><div class="btn-label">Điều Hoà</div><div class="btn-status" id="txt-ac">AUTO</div>
+                        <div class="btn-real-status" id="real-ac">(--)</div>
                     </div>
                     <div class="ctrl-btn auto-mode" id="btn-fresh" onclick="toggleBtn('btn-fresh')">
-                        <div class="btn-icon-circle">🍃</div><div class="btn-label">Khí Tươi</div><div class="btn-status">AUTO</div><div class="btn-real-status" id="real-fan">(--)</div>
+                        <div class="btn-icon-circle">🍃</div><div class="btn-label">Khí Tươi</div><div class="btn-status" id="txt-fan">AUTO</div>
+                        <div class="btn-real-status" id="real-fan">(--)</div>
                     </div>
                 </div>
             </div>
@@ -207,11 +215,19 @@
             <div class="m-title-group"><div class="m-title" id="m-title">Nhiệt độ</div><div class="m-value-big"><span id="m-val">--</span> <span class="m-unit" id="m-unit">°C</span></div></div>
             <button class="btn-back" onclick="closeDetail()">⬅ Quay lại</button>
         </div>
+        
         <div class="modal-body">
             <div class="stat-box">
-                <div class="stat-row"><div class="stat-label">Thấp nhất hôm nay</div><div class="stat-val" style="color:#3b82f6" id="m-min">--</div></div>
-                <div class="stat-row"><div class="stat-label">Cao nhất hôm nay</div><div class="stat-val" style="color:#ef4444" id="m-max">--</div></div>
+                <div class="stat-tile max-val">
+                    <div class="tile-label">CAO NHẤT HÔM NAY</div>
+                    <div class="tile-value" id="m-max-tile">--</div>
+                </div>
+                <div class="stat-tile min-val">
+                    <div class="tile-label">THẤP NHẤT HÔM NAY</div>
+                    <div class="tile-value" id="m-min-tile">--</div>
+                </div>
             </div>
+            
             <div class="table-section">
                 <span class="section-title">LỊCH SỬ 7 NGÀY (Trung bình)</span>
                 <table class="weekly-table" id="weeklyTable">
@@ -233,22 +249,20 @@
     let ctrlMode = { ac: 0, fan: 0 }; 
     let realState = { ac: 0, fan: 0 }; 
 
-    /* --- GAUGE CONFIG (ĐÃ CHỈNH NGẮN KIM & VỊ TRÍ SỐ) --- */
+    /* --- CHART CONFIGS & HELPER --- */
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
     function getColorForAQI(aqi) { if (aqi <= 50) return AQI_COLORS[0]; if (aqi <= 100) return AQI_COLORS[1]; if (aqi <= 150) return AQI_COLORS[2]; if (aqi <= 200) return AQI_COLORS[3]; if (aqi <= 300) return AQI_COLORS[4]; return AQI_COLORS[5]; }
     function getTextForAQI(aqi) { if (aqi <= 50) return "Tốt"; if (aqi <= 100) return "Trung bình"; if (aqi <= 150) return "Kém"; if (aqi <= 200) return "Xấu"; if (aqi <= 300) return "Rất xấu"; return "Nguy hại"; }
-    
     function calculateNeedleAngle(aqi) { const segment = Math.PI / 6; let angle = 0; if (aqi <= 50) angle = (aqi / 50) * segment; else if (aqi <= 100) angle = segment + ((aqi - 50) / 50) * segment; else if (aqi <= 150) angle = segment * 2 + ((aqi - 100) / 50) * segment; else if (aqi <= 200) angle = segment * 3 + ((aqi - 150) / 50) * segment; else if (aqi <= 300) angle = segment * 4 + ((aqi - 200) / 100) * segment; else { let val = Math.min(aqi, 500); angle = segment * 5 + ((val - 300) / 200) * segment; } return Math.PI + angle; }
+    const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 11} }, grid: { borderDash: [4, 4], color: '#f3f4f6' } } }, elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2.5, tension: 0.4 } } };
     
+    // Plugin Kim Đồng Hồ (ĐÃ SỬA VỊ TRÍ VÀ CHIỀU DÀI KIM)
     const gaugePlugin = { id: 'gaugeLabels', afterDraw: (chart) => { 
         const { ctx, width, height } = chart; const meta = chart.getDatasetMeta(0); 
         const cx = meta.data[0].x; const cy = meta.data[0].y; const outerR = meta.data[0].outerRadius; 
-        
         let val = parseInt(document.getElementById('aqi-val').innerText) || 0; 
         const angle = calculateNeedleAngle(val); 
-        
-        // --- 1. LÀM NGẮN KIM LẠI ---
-        const needleLen = outerR - 45; // Ngắn hơn trước (cũ là -5)
+        const needleLen = outerR - 45; // [SỬA] Rút ngắn kim
 
         ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle); 
         ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6); 
@@ -256,34 +270,30 @@
         ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
         ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); 
         
-        // --- 2. CĂN CHỈNH VỊ TRÍ SỐ ---
-        const numbers = [0, 50, 100, 150, 200, 300, 500]; 
-        const segmentAngle = Math.PI / 6; 
+        const numbers = [0, 50, 100, 150, 200, 300, 500]; const segmentAngle = Math.PI / 6; 
         ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; 
         
-        // Mảng offset (r: khoảng cách từ tâm, y: điều chỉnh dọc) - ĐÃ CÂN CHỈNH KỸ
+        // [SỬA] Vị trí số (Đã căn chỉnh)
         const manualOffsets = [
-            { r: 30, y: -10 },   // 0: Nâng lên ngang chốt
-            { r: 24, y: 5 },   // 50
-            { r: 18, y: 0 },  // 100
-            { r: 10, y: 0 },  // 150 (Đỉnh)
-            { r: 18, y: 0 },  // 200
-            { r: 24, y: 5 },   // 300
-            { r: 30, y: -10 }    // 500: Nâng lên ngang chốt
+            { r: 30, y: 0 },   // 0
+            { r: 24, y: 5 },   // 50 (Khoá)
+            { r: 18, y: 15 },  // 100
+            { r: 10, y: 25 },  // 150 (Đỉnh)
+            { r: 18, y: 15 },  // 200
+            { r: 24, y: 5 },   // 300 (Khoá)
+            { r: 30, y: 0 }    // 500
         ]; 
         
         numbers.forEach((num, i) => { 
             const numAngle = Math.PI + (i * segmentAngle); 
             const offset = manualOffsets[i]; 
-            const rNum = outerR + offset.r; // Bán kính
+            const rNum = outerR + offset.r; 
             const nx = cx + Math.cos(numAngle) * rNum; 
             const ny = cy + Math.sin(numAngle) * rNum + offset.y; 
             ctx.fillText(num, nx, ny); 
         }); 
     }};
-
-    const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 11} }, grid: { borderDash: [4, 4], color: '#f3f4f6' } } }, elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2.5, tension: 0.4 } } };
-
+    
     function init() { 
         const ctxG = document.getElementById('gaugeCanvas').getContext('2d'); 
         gauge = new Chart(ctxG, { type: 'doughnut', data: { labels: [], datasets: [{ data: [1, 1, 1, 1, 1, 1], backgroundColor: AQI_COLORS, borderColor: '#ffffff', borderWidth: 2, cutout: '60%', circumference: 180, rotation: -90 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } } }, plugins: [gaugePlugin] }); 
@@ -291,7 +301,7 @@
         charts.temp = mkChart('cTemp', '#f59e0b'); charts.humi = mkChart('cHumi', '#3b82f6'); charts.pm = mkChart('cPM', '#10b981'); charts.co = mkChart('cCO', '#ef4444'); 
         fetchData(); setInterval(fetchData, 20000); setInterval(updateClock, 1000); updateClock(); 
     }
-
+    
     /* --- MODAL LOGIC (TABLE) --- */
     const detailConfig = { 'temp': { title: 'Nhiệt độ', unit: '°C', field: 'temp', color: '#f59e0b' }, 'humi': { title: 'Độ ẩm', unit: '%', field: 'humi', color: '#3b82f6' }, 'pm': { title: 'Bụi PM2.5', unit: 'µg/m³', field: 'pm', color: '#10b981' }, 'co': { title: 'Khí CO', unit: 'ppm', field: 'co', color: '#ef4444' } };
     
@@ -309,17 +319,17 @@
         const min = Math.min(...values); 
         const max = Math.max(...values); 
         
+        // Gán giá trị vào Tiles
         document.getElementById('m-val').innerText = conf.field === 'pm' || conf.field === 'co' ? current.toFixed(1) : Math.round(current); 
-        document.getElementById('m-min').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min); 
-        document.getElementById('m-max').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max); 
+        document.getElementById('m-max-tile').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max);
+        document.getElementById('m-min-tile').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min);
         
         // --- TẠO BẢNG SỐ LIỆU TUẦN ---
         const tableBody = document.getElementById('weeklyTable');
         let html = `<tr><th>Thứ</th><th>Trung bình (${conf.unit})</th></tr>`;
         
         for(let i=6; i>=0; i--) {
-            let dayName = moment().subtract(i, 'days').format('dddd'); // Thứ Hai, Thứ Ba...
-            // Giả lập dữ liệu (vì API free hạn chế)
+            let dayName = moment().subtract(i, 'days').format('dddd'); 
             let val = current * (0.9 + Math.random() * 0.2); 
             val = conf.field === 'pm' || conf.field === 'co' ? val.toFixed(1) : Math.round(val);
             
@@ -358,10 +368,19 @@
     function updateBtnUI(id, mode) {
         const btn = document.getElementById(id);
         const txtEl = btn.querySelector('.btn-status');
-        btn.className = 'ctrl-btn';
-        if (mode === 0) { btn.classList.add('auto-mode'); txtEl.innerText = "AUTO"; } 
-        else if (mode === 1) { btn.classList.add('mode-on'); txtEl.innerText = "BẬT (M)"; } 
-        else if (mode === 2) { btn.classList.add('mode-off'); txtEl.innerText = "TẮT (M)"; }
+        
+        btn.classList.remove('active', 'manual-on', 'manual-off', 'auto-mode', 'auto-active', 'mode-on', 'mode-off');
+        
+        if (mode === 0) { // AUTO
+            btn.classList.add('mode-auto');
+            txtEl.innerText = "AUTO";
+        } else if (mode === 1) { // ON
+            btn.classList.add('mode-on');
+            txtEl.innerText = "BẬT (M)";
+        } else if (mode === 2) { // OFF
+            btn.classList.add('mode-off');
+            txtEl.innerText = "TẮT (M)";
+        }
     }
 
     function setStatus(ok, msg) { 
@@ -392,19 +411,24 @@
         realState.ac = Math.floor(statusVal / 10);
         realState.fan = statusVal % 10;
 
+        // Cập nhật MODE từ Cloud
         if (ctrlMode.ac !== cloudACMode) { ctrlMode.ac = cloudACMode; updateBtnUI('btn-ac', ctrlMode.ac); }
+        if (ctrlMode.fan !== cloudFanMode) { ctrlMode.fan = cloudFanMode; updateBtnUI('btn-fresh', ctrlMode.fan); }
+        
+        // Cập nhật trạng thái thực tế (chỉ khi đang ở AUTO)
         if (ctrlMode.ac === 0) {
             const btn = document.getElementById('btn-ac');
-            if (realState.ac === 1) { btn.classList.add('running'); document.getElementById('real-ac').innerText = "(Đang chạy)"; } 
-            else { btn.classList.remove('running'); document.getElementById('real-ac').innerText = "(Đang nghỉ)"; }
-        } else { document.getElementById('real-ac').innerText = ""; }
+            const realTxtEl = document.getElementById('real-ac');
+            if (realState.ac === 1) { btn.classList.add('auto-active'); realTxtEl.innerText = "(Đang chạy)"; } 
+            else { btn.classList.remove('auto-active'); realTxtEl.innerText = "(Đang nghỉ)"; }
+        } else { document.getElementById('real-ac').innerText = ""; } // Ẩn khi Manual
 
-        if (ctrlMode.fan !== cloudFanMode) { ctrlMode.fan = cloudFanMode; updateBtnUI('btn-fresh', ctrlMode.fan); }
         if (ctrlMode.fan === 0) {
             const btn = document.getElementById('btn-fresh');
-            if (realState.fan === 1) { btn.classList.add('running'); document.getElementById('real-fan').innerText = "(Đang chạy)"; } 
-            else { btn.classList.remove('running'); document.getElementById('real-fan').innerText = "(Đang nghỉ)"; }
-        } else { document.getElementById('real-fan').innerText = ""; }
+            const realTxtEl = document.getElementById('real-fan');
+            if (realState.fan === 1) { btn.classList.add('auto-active'); realTxtEl.innerText = "(Đang chạy)"; } 
+            else { btn.classList.remove('auto-active'); realTxtEl.innerText = "(Đang nghỉ)"; }
+        } else { document.getElementById('real-fan').innerText = ""; } // Ẩn khi Manual
     }
     
     async function fetchData() {
@@ -416,16 +440,16 @@
             globalFeeds = data.feeds;
             const last = data.feeds[data.feeds.length-1];
             
-            // --- [MỚI] PHÁT HIỆN MẤT KẾT NỐI ---
+            // --- PHÁT HIỆN MẤT KẾT NỐI ---
             const lastTime = moment(last.created_at);
             const now = moment();
             const diffSeconds = now.diff(lastTime, 'seconds');
+            const MAX_OFFLINE_SECONDS = 180; // 3 phút
             
-            // Nếu quá 60s không có dữ liệu mới -> Coi như mất kết nối
-            if (diffSeconds > 300) {
+            if (diffSeconds > MAX_OFFLINE_SECONDS) {
                 setStatus(false, `Mất kết nối! (${lastTime.fromNow()})`);
             } else {
-                setStatus(true, `Cập nhật: ${lastTime.format('HH:mm:ss')}`);
+                setStatus(true, `Trực tuyến • Cập nhật ${lastTime.format('HH:mm:ss')}`);
             }
 
             updateView(last, data.feeds);
