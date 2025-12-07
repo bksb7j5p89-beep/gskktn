@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Phòng Khách</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
@@ -12,12 +12,12 @@
 
     <style>
         :root {
-            --bg-body: #f1f5f9;
+            --bg-body: #f8fafc;
             --bg-card: #ffffff;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
             --text-sub: #64748b;
-            --radius: 16px;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --radius: 20px;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.01);
         }
 
         body {
@@ -25,12 +25,12 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 24px;
             box-sizing: border-box;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -39,92 +39,105 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
-        h1 { margin: 0; font-size: 24px; font-weight: 800; color: #0f172a; }
+        h1 { margin: 0; font-size: 28px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
 
         .status-badge {
             background: #fff;
             padding: 8px 16px;
             border-radius: 99px;
             box-shadow: var(--shadow);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-sub);
             display: flex; align-items: center; gap: 8px;
+            border: 1px solid #e2e8f0;
         }
         .dot { width: 8px; height: 8px; border-radius: 50%; }
         .dot.ok { background: #10b981; animation: pulse 2s infinite; }
         .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* --- LAYOUT CHÍNH --- */
+        /* MAIN LAYOUT */
         .main-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr; /* Trái 2 phần - Phải 1 phần */
-            gap: 20px;
-            align-items: stretch; /* Kéo dãn chiều cao cho bằng nhau */
+            /* Tỷ lệ 2.5 phần trái - 1 phần phải */
+            grid-template-columns: 2.5fr 1fr; 
+            gap: 24px;
+            align-items: start;
         }
 
-        /* CỘT TRÁI (AQI & Charts) */
+        /* LEFT COLUMN */
         .left-col {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
 
-        /* AQI CARD */
+        /* 1. AQI CARD */
         .aqi-card {
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 20px;
+            padding: 24px;
             position: relative;
-            /* Chiều cao của AQI Card sẽ tự động khớp với chiều cao của cột phải */
-            height: 100%; 
-            min-height: 320px; /* Chiều cao tối thiểu để vẽ gauge */
             display: flex; flex-direction: column;
+            /* Chiều cao sẽ được JS xử lý cho bằng cột phải */
+            box-sizing: border-box;
         }
 
-        .card-label { font-size: 1rem; font-weight: 600; color: var(--text-sub); margin-bottom: 10px; }
+        .card-label { font-size: 1.1rem; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
 
         .gauge-wrapper {
             flex-grow: 1;
             position: relative;
-            display: flex; justify-content: center; align-items: flex-end;
-            padding-bottom: 20px;
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; /* Đẩy biểu đồ xuống đáy */
+            width: 100%;
+            height: 100%;
         }
 
         .aqi-overlay {
-            position: absolute; bottom: 10px; left: 0; right: 0; text-align: center;
+            position: absolute; 
+            bottom: 0px; /* Đẩy sát xuống đáy */
+            left: 0; right: 0; 
+            text-align: center;
+            pointer-events: none;
         }
-        .aqi-num { font-size: 4rem; font-weight: 800; line-height: 1; color: #334155; }
-        .aqi-txt { font-size: 1.2rem; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+        .aqi-num { font-size: 4.5rem; font-weight: 800; line-height: 1; color: #1e293b; letter-spacing: -2px; }
+        .aqi-txt { font-size: 1.4rem; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
-        /* GRID 4 ĐỒ THỊ (Nằm dưới AQI) */
+        /* 2. CHARTS GRID (2x2) - Nằm dưới AQI */
         .charts-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
         }
+        
         .chart-card {
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 15px;
-            height: 180px;
+            padding: 20px;
+            height: 220px; /* Chiều cao cố định cho đồ thị */
             display: flex; flex-direction: column;
+            border: 1px solid #f1f5f9;
         }
-        .chart-header { font-size: 0.8rem; font-weight: 600; color: var(--text-sub); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+        
+        .chart-header { 
+            font-size: 0.9rem; font-weight: 600; color: var(--text-sub); 
+            display: flex; align-items: center; gap: 8px; margin-bottom: 12px; 
+        }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* CỘT PHẢI (4 WIDGET VUÔNG) */
+        /* RIGHT COLUMN (4 WIDGETS) */
         .right-col-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2x2 */
-            grid-template-rows: 1fr 1fr;    /* 2 hàng */
-            gap: 15px;
-            height: 100%; /* Chiều cao tổng bằng AQI bên trái */
+            grid-template-columns: 1fr 1fr; /* 2 cột */
+            gap: 20px;
+            /* Height: auto, nội dung bên trong sẽ quyết định chiều cao */
         }
 
         .widget {
@@ -134,33 +147,31 @@
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             text-align: center;
-            aspect-ratio: 1/1; /* Luôn vuông */
-            padding: 10px;
+            aspect-ratio: 1/1; /* Hình vuông tuyệt đối */
+            padding: 16px;
+            border: 1px solid #f1f5f9;
         }
 
-        .w-icon { font-size: 1.8rem; margin-bottom: 5px; }
-        .w-label { font-size: 0.8rem; font-weight: 600; color: var(--text-sub); }
-        .w-val { font-size: 1.8rem; font-weight: 800; margin: 2px 0; }
-        .w-unit { font-size: 0.8rem; font-weight: 500; color: #94a3b8; }
+        .w-icon { font-size: 2rem; margin-bottom: 8px; }
+        .w-label { font-size: 0.9rem; font-weight: 600; color: var(--text-sub); }
+        .w-val { font-size: 2.2rem; font-weight: 800; margin: 4px 0; letter-spacing: -1px; }
+        .w-unit { font-size: 0.85rem; font-weight: 500; color: #94a3b8; }
 
-        /* Màu sắc */
+        /* Colors */
         .c-temp { color: #f59e0b; }
         .c-humi { color: #3b82f6; }
         .c-pm { color: #10b981; }
         .c-co { color: #ef4444; }
 
-        /* Error Overlay */
-        #error-msg {
-            display: none;
-            background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c;
-            padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;
-        }
-
-        /* Responsive Mobile */
-        @media (max-width: 900px) {
+        /* Responsive */
+        @media (max-width: 1024px) {
             .main-grid { grid-template-columns: 1fr; }
+            .right-col-grid { grid-template-columns: 1fr 1fr 1fr 1fr; } /* Tablet: trải ngang */
+            .aqi-card { height: 350px !important; } /* Reset height JS on mobile */
+        }
+        @media (max-width: 640px) {
+            .right-col-grid { grid-template-columns: 1fr 1fr; }
             .charts-container { grid-template-columns: 1fr; }
-            .aqi-card { min-height: 280px; }
         }
     </style>
 </head>
@@ -171,22 +182,20 @@
         <h1>Phòng Khách</h1>
         <div class="status-badge">
             <div id="led" class="dot ok"></div>
-            <span id="status">Đang kết nối...</span>
+            <span id="status">Đang tải...</span>
         </div>
     </div>
 
-    <div id="error-msg"></div>
-
     <div class="main-grid">
         <div class="left-col">
-            <div class="aqi-card">
+            <div class="aqi-card" id="aqiCard">
                 <div class="card-label">Chỉ số AQI</div>
                 <div class="gauge-wrapper">
                     <canvas id="gaugeCanvas"></canvas>
-                    <div class="aqi-overlay">
-                        <div id="aqi-val" class="aqi-num">--</div>
-                        <div id="aqi-text" class="aqi-txt">--</div>
-                    </div>
+                </div>
+                <div class="aqi-overlay">
+                    <div id="aqi-val" class="aqi-num">--</div>
+                    <div id="aqi-text" class="aqi-txt">--</div>
                 </div>
             </div>
 
@@ -210,7 +219,7 @@
             </div>
         </div>
 
-        <div class="right-col-grid">
+        <div class="right-col-grid" id="rightCol">
             <div class="widget">
                 <div class="w-icon">🌡️</div>
                 <div class="w-label">Nhiệt độ</div>
@@ -250,17 +259,59 @@
     let charts = {};
     let gauge;
 
+    // --- XỬ LÝ GIAO DIỆN ---
+    // Hàm này ép chiều cao thẻ AQI (trái) bằng thẻ Widgets (phải)
+    function syncHeights() {
+        if(window.innerWidth > 1024) { // Chỉ chạy trên Desktop
+            const rightH = document.getElementById('rightCol').offsetHeight;
+            const aqiCard = document.getElementById('aqiCard');
+            if(rightH > 0) aqiCard.style.height = rightH + 'px';
+        } else {
+            document.getElementById('aqiCard').style.height = ''; // Reset mobile
+        }
+    }
+    // Gọi khi load và resize
+    window.addEventListener('load', syncHeights);
+    window.addEventListener('resize', syncHeights);
+
     // --- SETUP CHART.JS ---
-    // Cài đặt chung cho Line Chart
     const commonOptions = {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
             x: { display: false },
-            y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 10} }, grid: { borderDash: [2, 4] } }
+            y: { display: true, ticks: { maxTicksLimit: 4, font: {size: 10} }, grid: { borderDash: [2, 4], color: '#f1f5f9' } }
         },
         elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2, tension: 0.4 } }
     };
+
+    // Hàm tính góc kim dựa trên giá trị AQI và các khoảng chia đều
+    // Ta có 6 khoảng màu đều nhau (mỗi khoảng 30 độ trên tổng 180 độ)
+    // Range thực tế: 0-50, 51-100, 101-150, 151-200, 201-300, 301-500
+    function calculateNeedleAngle(aqi) {
+        let angle = 0;
+        const segment = 180 / 6; // 30 độ mỗi đoạn
+
+        if (aqi <= 50) {
+            angle = (aqi / 50) * segment;
+        } else if (aqi <= 100) {
+            angle = segment + ((aqi - 50) / 50) * segment;
+        } else if (aqi <= 150) {
+            angle = segment * 2 + ((aqi - 100) / 50) * segment;
+        } else if (aqi <= 200) {
+            angle = segment * 3 + ((aqi - 150) / 50) * segment;
+        } else if (aqi <= 300) {
+            angle = segment * 4 + ((aqi - 200) / 100) * segment;
+        } else {
+            let val = aqi; if(val > 500) val = 500;
+            angle = segment * 5 + ((val - 300) / 200) * segment;
+        }
+        
+        // Chart.js bắt đầu vẽ từ bên trái (180 độ trong hệ tọa độ canvas rotate)
+        // Nhưng logic kim quay: 0 AQI = -90 độ (9h), Max AQI = +90 độ (3h) so với trục đứng
+        // Cách đơn giản nhất: Convert angle (0-180) sang Radians và cộng thêm PI (để bắt đầu từ bên trái)
+        return Math.PI + (angle * (Math.PI / 180));
+    }
 
     function init() {
         // 1. Init Gauge
@@ -270,33 +321,42 @@
             data: {
                 labels: ['Tốt', 'TB', 'Kém', 'Xấu', 'Rất xấu', 'Nguy hại'],
                 datasets: [{
-                    data: [50, 50, 50, 50, 100, 200], // Các mức AQI
+                    // QUAN TRỌNG: Để [1,1,1,1,1,1] để chia đều các múi màu
+                    data: [1, 1, 1, 1, 1, 1], 
                     backgroundColor: ['#00e400', '#ffff00', '#ff7e00', '#ff0000', '#8f3f97', '#7e0023'],
-                    borderWidth: 0, cutout: '85%', circumference: 180, rotation: -90
+                    borderWidth: 0, cutout: '82%', circumference: 180, rotation: -90
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                layout: { padding: 0 }
             },
             plugins: [{
                 id: 'needle',
                 afterDraw: (chart) => {
                     const { ctx, width, height } = chart;
                     let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
-                    if(val > 500) val = 500; if(val < 0) val = 0;
-                    // Map 0-500 to 0-PI
-                    const angle = Math.PI + (val / 500) * Math.PI;
-                    const cx = width / 2;
-                    const cy = height - 10;
                     
+                    const angle = calculateNeedleAngle(val);
+                    
+                    const cx = width / 2;
+                    const cy = height - 5; // Dịch tâm xuống sát đáy
+                    const needleLen = height * 0.85; // Kim dài
+
                     ctx.save();
                     ctx.translate(cx, cy);
                     ctx.rotate(angle);
+                    
+                    // Vẽ kim
                     ctx.beginPath();
-                    ctx.moveTo(0, -5); ctx.lineTo(height * 0.7, 0); ctx.lineTo(0, 5);
+                    ctx.moveTo(0, -6); 
+                    ctx.lineTo(needleLen, 0); 
+                    ctx.lineTo(0, 6);
                     ctx.fillStyle = '#334155'; ctx.fill();
-                    ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill();
+                    
+                    // Vẽ trục tâm
+                    ctx.beginPath(); ctx.arc(0,0,10,0,Math.PI*2); ctx.fill();
                     ctx.restore();
                 }
             }]
@@ -305,7 +365,7 @@
         // 2. Init Line Charts
         const mkChart = (id, color) => new Chart(document.getElementById(id), {
             type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color+'20', fill: true }] },
+            data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color+'15', fill: true }] },
             options: commonOptions
         });
 
@@ -319,23 +379,12 @@
         setInterval(fetchData, 20000);
     }
 
-    // --- LOGIC ---
+    // --- LOGIC DỮ LIỆU ---
     function setStatus(ok, msg) {
         const el = document.getElementById('status');
         const led = document.getElementById('led');
-        const err = document.getElementById('error-msg');
-        
         el.innerText = msg;
-        if(ok) {
-            led.className = 'dot ok';
-            el.style.color = 'var(--text-sub)';
-            err.style.display = 'none';
-        } else {
-            led.className = 'dot err';
-            el.style.color = '#ef4444';
-            err.innerText = "Lỗi: " + msg;
-            err.style.display = 'block';
-        }
+        led.className = ok ? 'dot ok' : 'dot err';
     }
 
     function updateView(last, feeds) {
@@ -354,6 +403,7 @@
         else if(aqi<=100){t="Trung bình";c="#d4d400";}
         else if(aqi<=150){t="Kém";c="#ff7e00";}
         else if(aqi<=200){t="Xấu";c="#ff0000";}
+        else if(aqi<=300){t="Rất xấu";c="#8f3f97";}
         else{t="Nguy hại";c="#7e0023";}
         elTxt.innerText = t; elTxt.style.color = c;
         gauge.update();
@@ -369,6 +419,9 @@
         updateC('humi', CONFIG.MAP.humi);
         updateC('pm', CONFIG.MAP.pm);
         updateC('co', CONFIG.MAP.co);
+
+        // Sync height again just in case font loading shifted things
+        setTimeout(syncHeights, 100);
     }
 
     async function fetchData() {
@@ -391,7 +444,7 @@
 
         } catch(e) {
             console.error(e);
-            setStatus(false, "Không thể tải dữ liệu. Kiểm tra lại ID/Mạng.");
+            setStatus(false, "Mất kết nối!");
         }
     }
 
