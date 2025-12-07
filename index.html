@@ -10,6 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/vi.min.js"></script>
 
     <style>
+        /* QUAN TRỌNG: Thêm box-sizing để tính toán kích thước bao gồm cả padding/border */
+        * { box-sizing: border-box; }
+
         :root {
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
@@ -17,7 +20,11 @@
             --text-sub: #64748b;
             --radius: 24px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
-            --row-height: 460px; /* Chiều cao chuẩn của khối AQI và khối Widget */
+            
+            /* KÍCH THƯỚC ĐÃ ĐỒNG BỘ CHÍNH XÁC */
+            --aqi-height: 460px;   /* Chiều cao thẻ AQI & Cụm Widget nhỏ */
+            --chart-height: 340px; /* Tăng lên 340px cho cả Đồ thị & Control Hub để cân đối hơn */
+            
             --fixed-width: 1500px;
             --primary-green: #10b981;
         }
@@ -46,21 +53,20 @@
         .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* MAIN GRID LAYOUT */
+        /* MAIN GRID */
         .main-grid {
             display: grid;
-            /* Cột phải rộng 460px (bằng var(--row-height)) để đảm bảo widget vuông vức như cũ */
-            grid-template-columns: 1fr var(--row-height); 
+            grid-template-columns: 1fr var(--aqi-height); /* Cột phải rộng 460px */
             gap: 24px; align-items: start;
         }
 
         .left-col { display: flex; flex-direction: column; gap: 24px; }
 
-        /* --- AQI CARD --- */
+        /* --- 1. AQI CARD --- */
         .aqi-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             padding: 0; position: relative; 
-            height: var(--row-height); 
+            height: var(--aqi-height); 
             display: flex; flex-direction: column; overflow: hidden;
         }
 
@@ -95,23 +101,23 @@
         .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .chart-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            padding: 24px; height: 300px; display: flex; flex-direction: column; border: 1px solid #f1f5f9;
+            padding: 24px; 
+            height: var(--chart-height); /* 340px */
+            display: flex; flex-direction: column; border: 1px solid #f1f5f9;
         }
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* --- RIGHT COLUMN CONTAINER (CỘT PHẢI MỚI) --- */
+        /* --- RIGHT COLUMN CONTAINER --- */
         .right-column-container {
             display: flex; 
             flex-direction: column; 
             gap: 24px; /* Khoảng cách bằng khoảng cách cột trái để thẳng hàng */
         }
 
-        /* CLASS CŨ: .right-col-grid
-           Giữ nguyên 100% thuộc tính của file gốc để 4 widget không bị đổi khác 
-        */
+        /* KHỐI 1: 4 WIDGET NHỎ */
         .right-col-grid {
-            height: var(--row-height); /* 460px */
+            height: var(--aqi-height); /* 460px */
             display: grid;
             grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
             gap: 20px;
@@ -127,24 +133,22 @@
         .w-label { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
         .w-val { font-size: 2.8rem; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: #334155; }
         .w-unit { font-size: 1rem; font-weight: 600; color: #94a3b8; }
-
         .c-temp { color: #f59e0b; } .c-humi { color: #3b82f6; } .c-pm { color: #10b981; } .c-co { color: #ef4444; }
 
-        /* --- CONTROL HUB (PHẦN MỚI THÊM) --- */
+        /* --- KHỐI 2: CONTROL HUB (ĐÃ SỬA LẠI TỶ LỆ) --- */
         .control-hub {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            /* Chiều cao bằng đúng 1 đồ thị (300px) */
-            height: 300px; 
+            height: var(--chart-height); /* 340px - BẰNG TUYỆT ĐỐI VỚI CHART */
             display: flex; flex-direction: column;
             overflow: hidden; border: 1px solid #f1f5f9;
-            /* Chiều rộng sẽ tự động bằng chiều rộng của cột cha (.right-column-container), 
-               tức là bằng chiều rộng của .right-col-grid bên trên */
         }
 
-        /* Header: Time & Date */
+        /* 1. Header: Time & Date (Chiếm 35%) */
         .hub-header {
-            flex: 1; display: flex;
+            flex: 35; /* Tỷ lệ 35% */
+            display: flex;
             border-bottom: 1px solid #e2e8f0;
+            padding: 5px 0;
         }
         .hub-cell {
             flex: 1; display: flex; flex-direction: column;
@@ -153,22 +157,24 @@
         .hub-cell.separator { border-right: 1px solid #e2e8f0; }
 
         .time-display { 
-            font-size: 3rem; font-weight: 800; color: #1e293b; 
+            font-size: 3.2rem; /* Số giờ to */
+            font-weight: 900; color: #1e293b; 
             line-height: 1; letter-spacing: -2px; 
         }
         .date-day { 
-            font-size: 1.1rem; font-weight: 600; color: #64748b; 
-            text-transform: uppercase; margin-bottom: 5px; 
+            font-size: 0.9rem; font-weight: 700; color: #64748b; 
+            text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;
         }
         .date-full { 
-            font-size: 1.8rem; /* Ngày to rõ theo yêu cầu */
+            font-size: 1.4rem; 
             font-weight: 800; color: #334155; 
-            letter-spacing: -1px; 
+            letter-spacing: -0.5px; 
         }
 
-        /* Buttons */
+        /* 2. Buttons (Chiếm 65%) */
         .hub-buttons {
-            flex: 1.2; display: flex; gap: 20px; padding: 20px;
+            flex: 65; /* Tỷ lệ 65% - Dành nhiều đất cho nút bấm hơn */
+            display: flex; gap: 20px; padding: 20px;
             background: #f8fafc;
         }
 
@@ -182,12 +188,13 @@
         .ctrl-btn:active { transform: scale(0.98); }
 
         .btn-icon-circle {
-            width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%;
+            width: 55px; height: 55px; /* Icon to, dễ nhìn */
+            background: #f1f5f9; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; margin-bottom: 8px; transition: 0.3s;
+            font-size: 2rem; margin-bottom: 10px; transition: 0.3s;
         }
-        .btn-label { font-size: 1rem; font-weight: 700; color: #475569; }
-        .btn-status { font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-top: 4px; }
+        .btn-label { font-size: 1.1rem; font-weight: 800; color: #475569; }
+        .btn-status { font-size: 0.9rem; font-weight: 700; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }
 
         .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
         .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
