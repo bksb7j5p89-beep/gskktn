@@ -10,7 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/vi.min.js"></script>
 
     <style>
-        /* QUAN TRỌNG: Thêm box-sizing để tính toán kích thước bao gồm cả padding/border */
         * { box-sizing: border-box; }
 
         :root {
@@ -21,12 +20,13 @@
             --radius: 24px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
             
-            /* KÍCH THƯỚC ĐÃ ĐỒNG BỘ CHÍNH XÁC */
-            --aqi-height: 460px;   /* Chiều cao thẻ AQI & Cụm Widget nhỏ */
-            --chart-height: 340px; /* Tăng lên 340px cho cả Đồ thị & Control Hub để cân đối hơn */
-            
+            /* KÍCH THƯỚC ĐỒNG BỘ */
+            --aqi-height: 460px;   
+            --chart-height: 340px; 
             --fixed-width: 1500px;
             --primary-green: #10b981;
+            --primary-blue: #3b82f6;
+            --primary-orange: #f59e0b;
         }
 
         body {
@@ -56,78 +56,60 @@
         /* MAIN GRID */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr var(--aqi-height); /* Cột phải rộng 460px */
+            grid-template-columns: 1fr var(--aqi-height); 
             gap: 24px; align-items: start;
         }
 
         .left-col { display: flex; flex-direction: column; gap: 24px; }
 
-        /* --- 1. AQI CARD --- */
+        /* AQI CARD */
         .aqi-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            padding: 0; position: relative; 
-            height: var(--aqi-height); 
+            padding: 0; position: relative; height: var(--aqi-height); 
             display: flex; flex-direction: column; overflow: hidden;
         }
-
         .card-label {
             font-size: 1.2rem; font-weight: 700; color: var(--text-sub);
             position: absolute; top: 20px; left: 25px; z-index: 10;
         }
-
         .gauge-section {
-            flex: 6; position: relative;
-            display: flex; justify-content: center; align-items: flex-end;
+            flex: 6; position: relative; display: flex; justify-content: center; align-items: flex-end;
             padding-bottom: 10px; width: 100%;
         }
         .gauge-wrapper { position: relative; width: 90%; height: 100%; }
-
-        .info-section {
-            flex: 4; display: flex; flex-direction: row; border-top: 1px solid #f1f5f9;
-        }
-
+        .info-section { flex: 4; display: flex; flex-direction: row; border-top: 1px solid #f1f5f9; }
         .aqi-value-box {
             flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
             border-right: 1px solid #f1f5f9; background: #f8fafc50;
         }
         .aqi-number { font-size: 5.5rem; font-weight: 900; line-height: 1; color: #1e293b; letter-spacing: -2px; }
         .aqi-sub-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; margin-top: 5px; }
-
         .aqi-status-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .aqi-status-text { font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin: 0; line-height: 1.2; text-align: center; transition: color 0.3s ease; }
         .aqi-status-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
 
-        /* 2. CHARTS GRID */
+        /* CHARTS GRID */
         .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .chart-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            padding: 24px; 
-            height: var(--chart-height); /* 340px */
+            padding: 24px; height: var(--chart-height); 
             display: flex; flex-direction: column; border: 1px solid #f1f5f9;
         }
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* --- RIGHT COLUMN CONTAINER --- */
-        .right-column-container {
-            display: flex; 
-            flex-direction: column; 
-            gap: 24px; /* Khoảng cách bằng khoảng cách cột trái để thẳng hàng */
-        }
+        /* RIGHT COLUMN */
+        .right-column-container { display: flex; flex-direction: column; gap: 24px; }
 
-        /* KHỐI 1: 4 WIDGET NHỎ */
+        /* 1. 4 WIDGETS */
         .right-col-grid {
-            height: var(--aqi-height); /* 460px */
-            display: grid;
-            grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-            gap: 20px;
+            height: var(--aqi-height); 
+            display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px;
         }
-
         .widget {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 15px; border: 1px solid #f1f5f9;
-            aspect-ratio: 1/1; 
+            text-align: center; padding: 15px; border: 1px solid #f1f5f9; aspect-ratio: 1/1; 
         }
         .w-icon { font-size: 2.5rem; margin-bottom: 10px; }
         .w-label { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -135,49 +117,19 @@
         .w-unit { font-size: 1rem; font-weight: 600; color: #94a3b8; }
         .c-temp { color: #f59e0b; } .c-humi { color: #3b82f6; } .c-pm { color: #10b981; } .c-co { color: #ef4444; }
 
-        /* --- KHỐI 2: CONTROL HUB (ĐÃ SỬA LẠI TỶ LỆ) --- */
+        /* 2. CONTROL HUB */
         .control-hub {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            height: var(--chart-height); /* 340px - BẰNG TUYỆT ĐỐI VỚI CHART */
-            display: flex; flex-direction: column;
-            overflow: hidden; border: 1px solid #f1f5f9;
+            height: var(--chart-height); 
+            display: flex; flex-direction: column; overflow: hidden; border: 1px solid #f1f5f9;
         }
-
-        /* 1. Header: Time & Date (Chiếm 35%) */
-        .hub-header {
-            flex: 35; /* Tỷ lệ 35% */
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 5px 0;
-        }
-        .hub-cell {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-        }
+        .hub-header { flex: 35; display: flex; border-bottom: 1px solid #e2e8f0; padding: 5px 0; }
+        .hub-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hub-cell.separator { border-right: 1px solid #e2e8f0; }
-
-        .time-display { 
-            font-size: 3.2rem; /* Số giờ to */
-            font-weight: 900; color: #1e293b; 
-            line-height: 1; letter-spacing: -2px; 
-        }
-        .date-day { 
-            font-size: 0.9rem; font-weight: 700; color: #64748b; 
-            text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;
-        }
-        .date-full { 
-            font-size: 1.4rem; 
-            font-weight: 800; color: #334155; 
-            letter-spacing: -0.5px; 
-        }
-
-        /* 2. Buttons (Chiếm 65%) */
-        .hub-buttons {
-            flex: 65; /* Tỷ lệ 65% - Dành nhiều đất cho nút bấm hơn */
-            display: flex; gap: 20px; padding: 20px;
-            background: #f8fafc;
-        }
-
+        .time-display { font-size: 3.2rem; font-weight: 900; color: #1e293b; line-height: 1; letter-spacing: -2px; }
+        .date-day { font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .date-full { font-size: 1.4rem; font-weight: 800; color: #334155; letter-spacing: -0.5px; }
+        .hub-buttons { flex: 65; display: flex; gap: 20px; padding: 20px; background: #f8fafc; }
         .ctrl-btn {
             flex: 1; background: #ffffff; border-radius: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0;
@@ -186,20 +138,41 @@
         }
         .ctrl-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         .ctrl-btn:active { transform: scale(0.98); }
-
-        .btn-icon-circle {
-            width: 55px; height: 55px; /* Icon to, dễ nhìn */
-            background: #f1f5f9; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; margin-bottom: 10px; transition: 0.3s;
-        }
+        .btn-icon-circle { width: 55px; height: 55px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; transition: 0.3s; }
         .btn-label { font-size: 1.1rem; font-weight: 800; color: #475569; }
         .btn-status { font-size: 0.9rem; font-weight: 700; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }
-
         .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
         .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
         .ctrl-btn.active .btn-label { color: #065f46; }
         .ctrl-btn.active .btn-status { color: var(--primary-green); }
+
+        /* 3. NEW: INSIGHT CARD (LẤP ĐẦY KHOẢNG TRỐNG) */
+        .insight-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* Màu tối sang trọng */
+            border-radius: var(--radius); box-shadow: var(--shadow);
+            height: var(--chart-height); /* 340px - Bằng chiều cao chart bên trái */
+            padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #fff; text-align: center; position: relative; overflow: hidden;
+        }
+        /* Họa tiết trang trí nền */
+        .insight-card::before {
+            content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px;
+            background: rgba(255,255,255,0.05); border-radius: 50%;
+        }
+        .insight-card::after {
+            content: ''; position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px;
+            background: rgba(255,255,255,0.05); border-radius: 50%;
+        }
+
+        .insight-icon { font-size: 4.5rem; margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        
+        .insight-title { font-size: 1rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .insight-status { font-size: 2.8rem; font-weight: 900; margin-bottom: 15px; line-height: 1.1; }
+        .insight-desc { 
+            font-size: 1.1rem; line-height: 1.5; color: #cbd5e1; background: rgba(255,255,255,0.1); 
+            padding: 10px 20px; border-radius: 12px; font-weight: 500;
+        }
 
     </style>
 </head>
@@ -292,7 +265,6 @@
                         <div class="date-full" id="clock-date">--/--/----</div>
                     </div>
                 </div>
-
                 <div class="hub-buttons">
                     <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')">
                         <div class="btn-icon-circle">❄️</div>
@@ -305,6 +277,13 @@
                         <div class="btn-status">ON</div>
                     </div>
                 </div>
+            </div>
+
+            <div class="insight-card">
+                <div class="insight-title">Comfort Level</div>
+                <div class="insight-icon" id="insight-icon">😊</div>
+                <div class="insight-status" id="insight-status">--</div>
+                <div class="insight-desc" id="insight-msg">Analyzing environment data...</div>
             </div>
 
         </div>
@@ -320,9 +299,9 @@
 
     let charts = {};
     let gauge;
-
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
 
+    /* ... Các hàm helper cũ giữ nguyên ... */
     function getColorForAQI(aqi) {
         if (aqi <= 50) return AQI_COLORS[0];
         if (aqi <= 100) return AQI_COLORS[1];
@@ -331,7 +310,6 @@
         if (aqi <= 300) return AQI_COLORS[4];
         return AQI_COLORS[5];
     }
-
     function getTextForAQI(aqi) {
         if (aqi <= 50) return "Good";
         if (aqi <= 100) return "Moderate";
@@ -368,45 +346,20 @@
         afterDraw: (chart) => {
             const { ctx, width, height } = chart;
             const meta = chart.getDatasetMeta(0);
-            
-            const cx = width / 2;
-            const cy = height - (height * 0.15); 
-            const outerR = meta.data[0].outerRadius;
-            
-            // 1. VẼ KIM
+            const cx = width / 2; const cy = height - (height * 0.15); const outerR = meta.data[0].outerRadius;
             let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
             const angle = calculateNeedleAngle(val);
             const needleLen = outerR - 5; 
-
-            ctx.save();
-            ctx.translate(cx, cy);
-            ctx.rotate(angle);
-            ctx.beginPath();
-            ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6);
+            ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
+            ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6);
             ctx.fillStyle = '#1e293b'; ctx.fill();
             ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
             ctx.restore();
-
-            // 2. VẼ SỐ (ĐÃ TINH CHỈNH VỊ TRÍ)
             const numbers = [0, 50, 100, 150, 200, 300, 500];
             const segmentAngle = Math.PI / 6;
-            
-            ctx.font = '700 15px Inter'; 
-            ctx.fillStyle = '#64748b';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            const manualOffsets = [
-                { r: 34, y: 35 },  // 0
-                { r: 24, y: 30 },  // 50
-                { r: 15, y: 35 },  // 100
-                { r: 8, y: 40 },  // 150
-                { r: 15, y: 35 },  // 200
-                { r: 24, y: 30 },  // 300
-                { r: 34, y: 35 }   // 500
-            ];
-
+            ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            const manualOffsets = [{ r: 34, y: 35 }, { r: 24, y: 30 }, { r: 15, y: 35 }, { r: 8, y: 40 }, { r: 15, y: 35 }, { r: 24, y: 30 }, { r: 34, y: 35 }];
             numbers.forEach((num, i) => {
                 const numAngle = Math.PI + (i * segmentAngle);
                 const offset = manualOffsets[i];
@@ -422,24 +375,8 @@
         const ctxG = document.getElementById('gaugeCanvas').getContext('2d');
         gauge = new Chart(ctxG, {
             type: 'doughnut',
-            data: {
-                labels: [],
-                datasets: [{
-                    data: [1, 1, 1, 1, 1, 1], 
-                    backgroundColor: AQI_COLORS,
-                    borderColor: '#ffffff', 
-                    borderWidth: 2,
-                    cutout: '60%', 
-                    circumference: 180, 
-                    rotation: -90
-                }]
-            },
-            options: {
-                responsive: true, 
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } }
-            },
+            data: { labels: [], datasets: [{ data: [1, 1, 1, 1, 1, 1], backgroundColor: AQI_COLORS, borderColor: '#ffffff', borderWidth: 2, cutout: '60%', circumference: 180, rotation: -90 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } } },
             plugins: [gaugePlugin]
         });
 
@@ -455,29 +392,20 @@
 
         fetchData();
         setInterval(fetchData, 20000);
-
-        // Chạy đồng hồ
-        setInterval(updateClock, 1000); 
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
     }
 
     function updateClock() {
-        const now = moment();
-        now.locale('vi'); 
+        const now = moment(); now.locale('vi'); 
         document.getElementById('clock-time').innerText = now.format('HH:mm');
         document.getElementById('clock-day').innerText = now.format('dddd');
         document.getElementById('clock-date').innerText = now.format('DD/MM/YYYY');
     }
 
     function toggleBtn(id) {
-        const btn = document.getElementById(id);
-        const statusEl = btn.querySelector('.btn-status');
+        const btn = document.getElementById(id); const statusEl = btn.querySelector('.btn-status');
         btn.classList.toggle('active');
-        if(btn.classList.contains('active')) {
-            statusEl.innerText = "ON";
-        } else {
-            statusEl.innerText = "OFF";
-        }
+        statusEl.innerText = btn.classList.contains('active') ? "ON" : "OFF";
     }
 
     function setStatus(ok, msg) {
@@ -485,22 +413,49 @@
         document.getElementById('led').className = ok ? 'dot ok' : 'dot err';
     }
 
+    // HÀM MỚI: CẬP NHẬT LỜI KHUYÊN (INSIGHT)
+    function updateInsight(temp, humi, aqi) {
+        const iconEl = document.getElementById('insight-icon');
+        const statusEl = document.getElementById('insight-status');
+        const msgEl = document.getElementById('insight-msg');
+        
+        // Logic đơn giản để gợi ý
+        if (aqi > 150) {
+            iconEl.innerText = "😷"; statusEl.innerText = "Polluted"; msgEl.innerText = "Air quality is bad. Turn on air purifier immediately.";
+        } else if (temp > 30) {
+            iconEl.innerText = "🥵"; statusEl.innerText = "Too Hot"; msgEl.innerText = "Temperature is high. Consider turning on the AC.";
+        } else if (humi > 80) {
+            iconEl.innerText = "💧"; statusEl.innerText = "Humid"; msgEl.innerText = "High humidity detected. Enable dehumidifier mode.";
+        } else if (temp < 18) {
+            iconEl.innerText = "🥶"; statusEl.innerText = "Cold"; msgEl.innerText = "It's getting cold. Close windows to keep warm.";
+        } else {
+            iconEl.innerText = "😊"; statusEl.innerText = "Comfortable"; msgEl.innerText = "Great conditions! Enjoy your time in the living room.";
+        }
+    }
+
     function updateView(last, feeds) {
         const aqi = Math.round(last[CONFIG.MAP.aqi] || 0);
+        const temp = Math.round(last[CONFIG.MAP.temp] || 0);
+        const humi = Math.round(last[CONFIG.MAP.humi] || 0);
+        const pm = parseFloat(last[CONFIG.MAP.pm] || 0).toFixed(1);
+        const co = parseFloat(last[CONFIG.MAP.co] || 0).toFixed(1);
+
         const color = getColorForAQI(aqi);
         
         document.getElementById('aqi-val').innerText = aqi; 
-        
         const txtEl = document.getElementById('aqi-text');
         txtEl.innerText = getTextForAQI(aqi);
         txtEl.style.color = color;
 
-        document.getElementById('v-temp').innerText = Math.round(last[CONFIG.MAP.temp] || 0);
-        document.getElementById('v-humi').innerText = Math.round(last[CONFIG.MAP.humi] || 0);
-        document.getElementById('v-pm').innerText = parseFloat(last[CONFIG.MAP.pm] || 0).toFixed(1);
-        document.getElementById('v-co').innerText = parseFloat(last[CONFIG.MAP.co] || 0).toFixed(1);
+        document.getElementById('v-temp').innerText = temp;
+        document.getElementById('v-humi').innerText = humi;
+        document.getElementById('v-pm').innerText = pm;
+        document.getElementById('v-co').innerText = co;
 
         gauge.update();
+        
+        // Gọi hàm cập nhật Insight Widget
+        updateInsight(temp, humi, aqi);
 
         const labels = feeds.map(f => moment(f.created_at).format('HH:mm'));
         const upd = (k, f) => {
@@ -520,13 +475,10 @@
             if(!res.ok) throw new Error();
             const data = await res.json();
             if(!data.feeds.length) { setStatus(true, "Waiting for data..."); return; }
-            
             const last = data.feeds[data.feeds.length-1];
             updateView(last, data.feeds);
             setStatus(true, `Updated: ${moment(last.created_at).format('HH:mm:ss DD/MM')}`);
-        } catch(e) {
-            setStatus(false, "Connection Lost!");
-        }
+        } catch(e) { setStatus(false, "Connection Lost!"); }
     }
 
     window.onload = init;
