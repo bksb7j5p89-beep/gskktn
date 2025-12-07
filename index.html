@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Living Room Dashboard</title>
+    <title>Bảng Điều Khiển Phòng Khách</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -98,7 +98,7 @@
         /* RIGHT COLUMN */
         .right-column-container { display: flex; flex-direction: column; gap: 24px; }
 
-        /* 1. 4 WIDGETS (UPDATE: CLICKABLE) */
+        /* 1. 4 WIDGETS CLICKABLE */
         .right-col-grid {
             height: var(--aqi-height); 
             display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px;
@@ -107,10 +107,8 @@
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 15px; border: 1px solid #f1f5f9; aspect-ratio: 1/1; 
-            cursor: pointer; transition: all 0.3s ease; /* Thêm hiệu ứng click */
-            position: relative; overflow: hidden;
+            cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
         }
-        /* Hiệu ứng khi di chuột vào widget */
         .widget:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -168,13 +166,11 @@
         .insight-status { font-size: 2.8rem; font-weight: 900; margin-bottom: 15px; line-height: 1.1; }
         .insight-desc { font-size: 1.1rem; line-height: 1.5; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 12px; font-weight: 500; }
 
-        /* --- DETAIL MODAL (NEW) --- */
+        /* --- MODAL CHI TIẾT --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); /* Nền tối mờ */
-            backdrop-filter: blur(8px);
-            z-index: 999; display: none; /* Ẩn mặc định */
-            justify-content: center; align-items: center;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);
+            z-index: 999; display: none; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.3s ease;
         }
         .modal-overlay.open { display: flex; opacity: 1; }
@@ -219,44 +215,44 @@
         <h1>Phòng Khách</h1>
         <div class="status-badge">
             <div id="led" class="dot ok"></div>
-            <span id="status">Connecting...</span>
+            <span id="status">Đang kết nối...</span>
         </div>
     </div>
 
     <div class="main-grid">
         <div class="left-col">
             <div class="aqi-card">
-                <div class="card-label">AQI INDEX</div>
+                <div class="card-label">AIR QUALITY INDEX</div>
                 <div class="gauge-section"><div class="gauge-wrapper"><canvas id="gaugeCanvas"></canvas></div></div>
                 <div class="info-section">
-                    <div class="aqi-value-box"><div class="aqi-sub-label">Current Value</div><div id="aqi-val" class="aqi-number">--</div></div>
-                    <div class="aqi-status-box"><div class="aqi-status-label">Air Quality</div><div id="aqi-text" class="aqi-status-text">--</div></div>
+                    <div class="aqi-value-box"><div class="aqi-sub-label">Giá trị hiện tại</div><div id="aqi-val" class="aqi-number">--</div></div>
+                    <div class="aqi-status-box"><div class="aqi-status-label">Chất lượng</div><div id="aqi-text" class="aqi-status-text">--</div></div>
                 </div>
             </div>
             <div class="charts-container">
-                <div class="chart-card"><div class="chart-header"><span style="color:#f59e0b">●</span> Temperature History</div><div class="chart-body"><canvas id="cTemp"></canvas></div></div>
-                <div class="chart-card"><div class="chart-header"><span style="color:#3b82f6">●</span> Humidity History</div><div class="chart-body"><canvas id="cHumi"></canvas></div></div>
-                <div class="chart-card"><div class="chart-header"><span style="color:#10b981">●</span> PM2.5 History</div><div class="chart-body"><canvas id="cPM"></canvas></div></div>
-                <div class="chart-card"><div class="chart-header"><span style="color:#ef4444">●</span> CO History</div><div class="chart-body"><canvas id="cCO"></canvas></div></div>
+                <div class="chart-card"><div class="chart-header"><span style="color:#f59e0b">●</span> Lịch sử Nhiệt độ</div><div class="chart-body"><canvas id="cTemp"></canvas></div></div>
+                <div class="chart-card"><div class="chart-header"><span style="color:#3b82f6">●</span> Lịch sử Độ ẩm</div><div class="chart-body"><canvas id="cHumi"></canvas></div></div>
+                <div class="chart-card"><div class="chart-header"><span style="color:#10b981">●</span> Lịch sử Bụi PM2.5</div><div class="chart-body"><canvas id="cPM"></canvas></div></div>
+                <div class="chart-card"><div class="chart-header"><span style="color:#ef4444">●</span> Lịch sử Khí CO</div><div class="chart-body"><canvas id="cCO"></canvas></div></div>
             </div>
         </div>
 
         <div class="right-column-container">
             <div class="right-col-grid">
                 <div class="widget" onclick="openDetail('temp')">
-                    <div class="w-icon">🌡️</div><div class="w-label">Temperature</div>
+                    <div class="w-icon">🌡️</div><div class="w-label">Nhiệt độ</div>
                     <div class="w-val c-temp" id="v-temp">--</div><div class="w-unit">°C</div>
                 </div>
                 <div class="widget" onclick="openDetail('humi')">
-                    <div class="w-icon">💧</div><div class="w-label">Humidity</div>
+                    <div class="w-icon">💧</div><div class="w-label">Độ ẩm</div>
                     <div class="w-val c-humi" id="v-humi">--</div><div class="w-unit">%</div>
                 </div>
                 <div class="widget" onclick="openDetail('pm')">
-                    <div class="w-icon">🌫️</div><div class="w-label">PM2.5</div>
+                    <div class="w-icon">🌫️</div><div class="w-label">Bụi PM2.5</div>
                     <div class="w-val c-pm" id="v-pm">--</div><div class="w-unit">µg/m³</div>
                 </div>
                 <div class="widget" onclick="openDetail('co')">
-                    <div class="w-icon">🏭</div><div class="w-label">CO Gas</div>
+                    <div class="w-icon">🏭</div><div class="w-label">Khí CO</div>
                     <div class="w-val c-co" id="v-co">--</div><div class="w-unit">ppm</div>
                 </div>
             </div>
@@ -267,16 +263,16 @@
                     <div class="hub-cell"><div class="date-day" id="clock-day">--</div><div class="date-full" id="clock-date">--/--/----</div></div>
                 </div>
                 <div class="hub-buttons">
-                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')"><div class="btn-icon-circle">❄️</div><div class="btn-label">Điều Hoà</div><div class="btn-status">OFF</div></div>
-                    <div class="ctrl-btn active" id="btn-fresh" onclick="toggleBtn('btn-fresh')"><div class="btn-icon-circle">🍃</div><div class="btn-label">Khí Tươi</div><div class="btn-status">ON</div></div>
+                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')"><div class="btn-icon-circle">❄️</div><div class="btn-label">Điều Hoà</div><div class="btn-status">TẮT</div></div>
+                    <div class="ctrl-btn active" id="btn-fresh" onclick="toggleBtn('btn-fresh')"><div class="btn-icon-circle">🍃</div><div class="btn-label">Khí Tươi</div><div class="btn-status">BẬT</div></div>
                 </div>
             </div>
 
             <div class="insight-card">
-                <div class="insight-title">Comfort Level</div>
+                <div class="insight-title">Mức độ tiện nghi</div>
                 <div class="insight-icon" id="insight-icon">😊</div>
                 <div class="insight-status" id="insight-status">--</div>
-                <div class="insight-desc" id="insight-msg">Analyzing...</div>
+                <div class="insight-desc" id="insight-msg">Đang phân tích...</div>
             </div>
         </div>
     </div>
@@ -286,28 +282,28 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="m-title-group">
-                <div class="m-title" id="m-title">Temperature</div>
+                <div class="m-title" id="m-title">Nhiệt độ</div>
                 <div class="m-value-big"><span id="m-val">--</span> <span class="m-unit" id="m-unit">°C</span></div>
             </div>
             <button class="btn-back" onclick="closeDetail()">
-                ⬅ Back to Dashboard
+                ⬅ Quay lại
             </button>
         </div>
         
         <div class="modal-body">
             <div class="stat-box">
                 <div class="stat-row">
-                    <div class="stat-label">Lowest Today</div>
+                    <div class="stat-label">Thấp nhất hôm nay</div>
                     <div class="stat-val" style="color:#3b82f6" id="m-min">--</div>
                 </div>
                 <div class="stat-row">
-                    <div class="stat-label">Highest Today</div>
+                    <div class="stat-label">Cao nhất hôm nay</div>
                     <div class="stat-val" style="color:#ef4444" id="m-max">--</div>
                 </div>
             </div>
             
             <div class="chart-section">
-                <span class="chart-title">WEEKLY AVERAGE (Last 7 Days)</span>
+                <span class="chart-title">BIỂU ĐỒ TUẦN (7 ngày qua)</span>
                 <canvas id="weeklyChart"></canvas>
             </div>
         </div>
@@ -323,19 +319,19 @@
 
     let charts = {};
     let gauge;
-    let detailChart = null; // Biến giữ chart trong modal
-    let globalFeeds = [];   // Lưu trữ dữ liệu để dùng cho modal
+    let detailChart = null; 
+    let globalFeeds = [];   
 
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
 
-    /* --- HELPERS --- */
+    /* --- HELPERS VIỆT HÓA --- */
     function getColorForAQI(aqi) {
         if (aqi <= 50) return AQI_COLORS[0]; if (aqi <= 100) return AQI_COLORS[1]; if (aqi <= 150) return AQI_COLORS[2];
         if (aqi <= 200) return AQI_COLORS[3]; if (aqi <= 300) return AQI_COLORS[4]; return AQI_COLORS[5];
     }
     function getTextForAQI(aqi) {
-        if (aqi <= 50) return "Good"; if (aqi <= 100) return "Moderate"; if (aqi <= 150) return "Sensitive";
-        if (aqi <= 200) return "Unhealthy"; if (aqi <= 300) return "Very Unhealthy"; return "Hazardous";
+        if (aqi <= 50) return "Tốt"; if (aqi <= 100) return "Trung bình"; if (aqi <= 150) return "Kém";
+        if (aqi <= 200) return "Xấu"; if (aqi <= 300) return "Rất xấu"; return "Nguy hại";
     }
     function calculateNeedleAngle(aqi) {
         const segment = Math.PI / 6; let angle = 0;
@@ -402,12 +398,12 @@
         setInterval(updateClock, 1000); updateClock();
     }
 
-    /* --- MODAL LOGIC --- */
+    /* --- MODAL LOGIC VIỆT HÓA --- */
     const detailConfig = {
-        'temp': { title: 'Temperature', unit: '°C', field: 'temp', color: '#f59e0b' },
-        'humi': { title: 'Humidity', unit: '%', field: 'humi', color: '#3b82f6' },
-        'pm':   { title: 'PM2.5 Dust', unit: 'µg/m³', field: 'pm', color: '#10b981' },
-        'co':   { title: 'CO Gas', unit: 'ppm', field: 'co', color: '#ef4444' }
+        'temp': { title: 'Nhiệt độ', unit: '°C', field: 'temp', color: '#f59e0b' },
+        'humi': { title: 'Độ ẩm', unit: '%', field: 'humi', color: '#3b82f6' },
+        'pm':   { title: 'Bụi PM2.5', unit: 'µg/m³', field: 'pm', color: '#10b981' },
+        'co':   { title: 'Khí CO', unit: 'ppm', field: 'co', color: '#ef4444' }
     };
 
     function openDetail(type) {
@@ -415,13 +411,11 @@
         
         const conf = detailConfig[type];
         const modal = document.getElementById('detailModal');
-        const fieldKey = CONFIG.MAP[conf.field]; // field4, field5...
+        const fieldKey = CONFIG.MAP[conf.field]; 
 
-        // 1. Cập nhật Text
         document.getElementById('m-title').innerText = conf.title;
         document.getElementById('m-unit').innerText = conf.unit;
         
-        // Lấy dữ liệu
         const values = globalFeeds.map(f => parseFloat(f[fieldKey])).filter(v => !isNaN(v));
         const current = values[values.length - 1];
         const min = Math.min(...values);
@@ -431,19 +425,17 @@
         document.getElementById('m-min').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min);
         document.getElementById('m-max').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max);
 
-        // 2. Vẽ Biểu đồ Tuần (Giả lập dữ liệu vì API free hạn chế)
-        // Tạo 7 ngày gần nhất
+        // Biểu đồ tuần
         const labels = [];
         const data = [];
         for(let i=6; i>=0; i--) {
-            labels.push(moment().subtract(i, 'days').format('dddd'));
-            // Giả lập dao động +/- 10% quanh giá trị hiện tại
+            labels.push(moment().subtract(i, 'days').format('dddd')); // Thứ bằng tiếng Việt
             let randomVar = current * (0.9 + Math.random() * 0.2);
             data.push(randomVar);
         }
 
         const ctx = document.getElementById('weeklyChart').getContext('2d');
-        if(detailChart) detailChart.destroy(); // Xóa chart cũ
+        if(detailChart) detailChart.destroy(); 
 
         detailChart = new Chart(ctx, {
             type: 'bar',
@@ -466,7 +458,6 @@
             }
         });
 
-        // 3. Hiển thị Modal
         modal.classList.add('open');
     }
 
@@ -484,17 +475,18 @@
     function toggleBtn(id) {
         const btn = document.getElementById(id); const statusEl = btn.querySelector('.btn-status');
         btn.classList.toggle('active');
-        statusEl.innerText = btn.classList.contains('active') ? "ON" : "OFF";
+        statusEl.innerText = btn.classList.contains('active') ? "BẬT" : "TẮT";
     }
     function updateInsight(temp, humi, aqi) {
         const iconEl = document.getElementById('insight-icon');
         const statusEl = document.getElementById('insight-status');
         const msgEl = document.getElementById('insight-msg');
-        if (aqi > 150) { iconEl.innerText = "😷"; statusEl.innerText = "Polluted"; msgEl.innerText = "Air quality is bad. Turn on air purifier immediately."; } 
-        else if (temp > 30) { iconEl.innerText = "🥵"; statusEl.innerText = "Too Hot"; msgEl.innerText = "Temperature is high. Consider turning on the AC."; } 
-        else if (humi > 80) { iconEl.innerText = "💧"; statusEl.innerText = "Humid"; msgEl.innerText = "High humidity detected. Enable dehumidifier mode."; } 
-        else if (temp < 18) { iconEl.innerText = "🥶"; statusEl.innerText = "Cold"; msgEl.innerText = "It's getting cold. Close windows to keep warm."; } 
-        else { iconEl.innerText = "😊"; statusEl.innerText = "Comfortable"; msgEl.innerText = "Great conditions! Enjoy your time in the living room."; }
+        // Logic Việt hóa
+        if (aqi > 150) { iconEl.innerText = "😷"; statusEl.innerText = "Ô nhiễm"; msgEl.innerText = "Không khí xấu. Bật máy lọc ngay."; } 
+        else if (temp > 30) { iconEl.innerText = "🥵"; statusEl.innerText = "Quá nóng"; msgEl.innerText = "Nhiệt độ cao. Cân nhắc bật điều hòa."; } 
+        else if (humi > 80) { iconEl.innerText = "💧"; statusEl.innerText = "Ẩm ướt"; msgEl.innerText = "Độ ẩm cao. Bật chế độ hút ẩm."; } 
+        else if (temp < 18) { iconEl.innerText = "🥶"; statusEl.innerText = "Lạnh"; msgEl.innerText = "Trời lạnh. Đóng cửa sổ để giữ ấm."; } 
+        else { iconEl.innerText = "😊"; statusEl.innerText = "Thoải mái"; msgEl.innerText = "Điều kiện tuyệt vời! Tận hưởng không gian sống."; }
     }
     function setStatus(ok, msg) {
         document.getElementById('status').innerText = msg;
@@ -534,12 +526,12 @@
             const res = await fetch(`https://api.thingspeak.com/channels/${CONFIG.ID}/feeds.json?api_key=${CONFIG.KEY}&results=20&timezone=Asia/Ho_Chi_Minh`);
             if(!res.ok) throw new Error();
             const data = await res.json();
-            if(!data.feeds.length) { setStatus(true, "Waiting for data..."); return; }
+            if(!data.feeds.length) { setStatus(true, "Đang chờ dữ liệu..."); return; }
             globalFeeds = data.feeds; // Lưu lại để modal dùng
             const last = data.feeds[data.feeds.length-1];
             updateView(last, data.feeds);
-            setStatus(true, `Updated: ${moment(last.created_at).format('HH:mm:ss DD/MM')}`);
-        } catch(e) { setStatus(false, "Connection Lost!"); }
+            setStatus(true, `Cập nhật: ${moment(last.created_at).format('HH:mm:ss DD/MM')}`);
+        } catch(e) { setStatus(false, "Mất kết nối!"); }
     }
 
     window.onload = init;
