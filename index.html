@@ -16,7 +16,7 @@
             --bg-card: #ffffff;
             --text-primary: #111827;
             --text-secondary: #6b7280;
-            --radius: 20px;
+            --radius: 20px; /* Bo tròn nhiều hơn giống hình mẫu */
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
@@ -46,7 +46,7 @@
             gap: 8px;
             background: #fff;
             padding: 8px 16px;
-            border-radius: 99px;
+            border-radius: 99px; /* Hình viên thuốc */
             box-shadow: var(--shadow);
             font-size: 0.85rem;
             font-weight: 500;
@@ -58,32 +58,33 @@
         .led-red { background-color: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* --- GRID LAYOUT CHÍNH --- */
+        /* --- GRID LAYOUT --- */
         .dashboard-grid {
             display: grid;
-            /* THAY ĐỔI QUAN TRỌNG: Chia đôi màn hình 50% - 50% */
-            grid-template-columns: 1fr 1fr; 
+            /* Tỷ lệ 3.5 : 1 để cột phải nhỏ gọn giống hình mẫu */
+            grid-template-columns: 3.5fr 1fr; 
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
             align-items: start;
         }
 
-        /* --- CỘT TRÁI (AQI + CHART) --- */
+        /* --- LEFT COLUMN --- */
         .left-column {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* AQI Card */
+        /* 1. AQI Card */
         .aqi-card {
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 20px;
             position: relative;
-            aspect-ratio: 2.5 / 1; /* Giữ tỷ lệ bè ngang */
+            /* Giới hạn chiều cao để không bị quá to */
+            height: 350px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -103,7 +104,7 @@
             height: 100%;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
+            align-items: flex-end; /* Đẩy biểu đồ xuống đáy */
             padding-bottom: 20px;
         }
 
@@ -115,10 +116,10 @@
             text-align: center;
         }
         
-        .aqi-number { font-size: 3rem; font-weight: 800; line-height: 1; color: #111; }
-        .aqi-status { font-size: 1rem; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+        .aqi-number { font-size: 3.5rem; font-weight: 800; line-height: 1; color: #111; }
+        .aqi-status { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
-        /* Charts Grid (Nằm dưới AQI) */
+        /* 2. Charts Grid (4 Đồ thị dưới AQI) */
         .charts-grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -130,7 +131,7 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 15px;
-            aspect-ratio: 2 / 1; /* Hình chữ nhật nằm ngang */
+            height: 180px; /* Chiều cao cố định */
             display: flex;
             flex-direction: column;
         }
@@ -147,18 +148,19 @@
 
         .chart-container-inner { flex-grow: 1; position: relative; width: 100%; }
 
-        /* --- CỘT PHẢI (4 WIDGET GIÁ TRỊ) --- */
+        /* --- RIGHT COLUMN (WIDGETS) --- */
         .right-column {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 cột bên trong */
-            gap: 20px;
+            grid-template-columns: 1fr 1fr; /* 2 cột bé */
+            gap: 15px;
         }
 
         .widget-card {
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            aspect-ratio: 1 / 1; /* Hình vuông */
+            /* Ép hình vuông */
+            aspect-ratio: 1 / 1; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -170,10 +172,11 @@
         
         .widget-card:hover { transform: translateY(-2px); }
 
-        .widget-icon { font-size: 1.5rem; margin-bottom: 8px; }
-        .widget-label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
-        .widget-value { font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
-        .widget-unit { font-size: 0.85rem; font-weight: 500; color: #9ca3af; }
+        /* Tinh chỉnh font size cho widget nhỏ */
+        .widget-icon { font-size: 1.2rem; margin-bottom: 5px; }
+        .widget-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 2px; }
+        .widget-value { font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+        .widget-unit { font-size: 0.75rem; font-weight: 500; color: #9ca3af; }
 
         .color-temp { color: #f59e0b; }
         .color-humi { color: #3b82f6; }
@@ -181,9 +184,17 @@
         .color-co { color: #ef4444; }
 
         /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .dashboard-grid { grid-template-columns: 1fr; } /* Mobile: 1 cột */
-            .aqi-card { height: 250px; aspect-ratio: auto; }
+        @media (max-width: 992px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .right-column { 
+                grid-template-columns: 1fr 1fr 1fr 1fr; /* Trên tablet trải ngang ra */
+            }
+            .aqi-card { height: 300px; }
+        }
+
+        @media (max-width: 600px) {
+            .right-column { grid-template-columns: 1fr 1fr; } /* Mobile về lại 2 cột */
+            .charts-grid-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -286,7 +297,7 @@
                     maintainAspectRatio: false, 
                     rotation: -90, circumference: 180, cutout: '82%',
                     plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    layout: { padding: 15 }
+                    layout: { padding: 20 }
                 },
                 plugins: [{
                     id: 'needle',
@@ -297,19 +308,19 @@
                         
                         const angle = Math.PI + (aqiVal / 500) * Math.PI;
                         const cx = width / 2;
-                        const cy = height - 25;
+                        const cy = height - 30; // Canh chỉnh tâm kim
 
                         ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
                         
                         // Vẽ kim
                         ctx.beginPath(); 
                         ctx.moveTo(0, -5); 
-                        ctx.lineTo(height / 1.7, 0); 
+                        ctx.lineTo(height / 1.6, 0); // Độ dài kim
                         ctx.lineTo(0, 5);
                         ctx.fillStyle = '#374151'; ctx.fill();
                         
                         // Chốt kim
-                        ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fillStyle = '#374151'; ctx.fill();
+                        ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fillStyle = '#374151'; ctx.fill();
                         ctx.restore();
                     }
                 }]
@@ -338,3 +349,105 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false }, 
+                        y: { 
+                            display: true,
+                            ticks: { maxTicksLimit: 5, font: {size: 10} }, 
+                            grid: { color: '#f3f4f6' } 
+                        }
+                    },
+                    interaction: { mode: 'index', intersect: false }
+                }
+            });
+        }
+
+        function initCharts() {
+            charts.temp = createMiniChart('chartTemp', '#f59e0b');
+            charts.humi = createMiniChart('chartHumi', '#3b82f6');
+            charts.pm   = createMiniChart('chartPM',   '#10b981');
+            charts.co   = createMiniChart('chartCO',   '#ef4444');
+        }
+
+        // --- FETCH DATA ---
+        function updateStatus(isSuccess, message) {
+            const led = document.getElementById('status-led');
+            const text = document.getElementById('status-text');
+            if (isSuccess) {
+                led.className = 'led led-green';
+                text.innerText = message;
+                text.style.color = '#333';
+            } else {
+                led.className = 'led led-red';
+                text.innerText = "Mất kết nối!";
+                text.style.color = '#ef4444';
+            }
+        }
+
+        function updateAqiDisplay(aqi) {
+            const elText = document.getElementById('aqi-text');
+            const elVal = document.getElementById('aqi-val');
+            elVal.innerText = aqi;
+            
+            let status = "", color = "";
+            if (aqi <= 50) { status = "Tốt"; color = "#00E400"; }
+            else if (aqi <= 100) { status = "Trung bình"; color = "#CCCC00"; }
+            else if (aqi <= 150) { status = "Kém"; color = "#FF7E00"; }
+            else if (aqi <= 200) { status = "Xấu"; color = "#FF0000"; }
+            else if (aqi <= 300) { status = "Rất xấu"; color = "#8F3F97"; }
+            else { status = "Nguy hại"; color = "#7E0023"; }
+
+            elText.innerText = status;
+            elText.style.color = color;
+            if(gaugeChart) gaugeChart.update();
+        }
+
+        async function fetchData() {
+            const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=20&timezone=Asia/Ho_Chi_Minh`;
+            
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Network error');
+                const data = await res.json();
+                
+                if(!data.feeds || data.feeds.length === 0) {
+                    updateStatus(true, "Chờ dữ liệu...");
+                    return;
+                }
+
+                const last = data.feeds[data.feeds.length - 1];
+
+                // Update Values
+                updateAqiDisplay(Math.round(last[FIELDS.aqi] || 0));
+                document.getElementById('temp-val').innerText = Math.round(last[FIELDS.temp] || 0);
+                document.getElementById('humi-val').innerText = Math.round(last[FIELDS.humi] || 0);
+                document.getElementById('pm-val').innerText = parseFloat(last[FIELDS.pm] || 0).toFixed(1);
+                document.getElementById('co-val').innerText = parseFloat(last[FIELDS.co] || 0).toFixed(1);
+
+                // Update Status
+                moment.locale('vi');
+                const timeStr = moment(last.created_at).format('HH:mm DD/MM');
+                updateStatus(true, `Cập nhật: ${timeStr}`);
+
+                // Update Charts
+                const labels = data.feeds.map(f => moment(f.created_at).format('HH:mm'));
+                charts.temp.data.labels = labels; charts.temp.data.datasets[0].data = data.feeds.map(f => f[FIELDS.temp]); charts.temp.update();
+                charts.humi.data.labels = labels; charts.humi.data.datasets[0].data = data.feeds.map(f => f[FIELDS.humi]); charts.humi.update();
+                charts.pm.data.labels = labels; charts.pm.data.datasets[0].data = data.feeds.map(f => f[FIELDS.pm]); charts.pm.update();
+                charts.co.data.labels = labels; charts.co.data.datasets[0].data = data.feeds.map(f => f[FIELDS.co]); charts.co.update();
+
+            } catch(e) {
+                console.error(e);
+                updateStatus(false, "Lỗi kết nối");
+            }
+        }
+
+        window.onload = () => {
+            initGauge();
+            initCharts();
+            fetchData();
+            setInterval(fetchData, 20000); 
+        };
+    </script>
+</body>
+</html>
