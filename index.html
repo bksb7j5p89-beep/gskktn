@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Living Room Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
@@ -19,6 +19,7 @@
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
             --row-height: 460px; 
             --fixed-width: 1500px;
+            --primary-green: #10b981;
         }
 
         body {
@@ -45,7 +46,7 @@
         .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* GRID LAYOUT */
+        /* GRID LAYOUT CHÍNH */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr var(--row-height); 
@@ -54,70 +55,37 @@
 
         .left-col { display: flex; flex-direction: column; gap: 24px; }
 
-        /* --- AQI CARD (SỬA LẠI THEO BỐ CỤC 1 TRÊN - 2 DƯỚI) --- */
+        /* --- 1. AQI CARD --- */
         .aqi-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             padding: 0; position: relative; 
             height: var(--row-height); 
             display: flex; flex-direction: column; overflow: hidden;
         }
-
         .card-label {
             font-size: 1.2rem; font-weight: 700; color: var(--text-sub);
             position: absolute; top: 20px; left: 25px; z-index: 10;
         }
-
-        /* PHẦN 1: GAUGE (CHIẾM 60% CHIỀU CAO) */
         .gauge-section {
-            flex: 6; 
-            position: relative;
+            flex: 6; position: relative;
             display: flex; justify-content: center; align-items: flex-end;
-            padding-bottom: 10px;
-            width: 100%;
+            padding-bottom: 10px; width: 100%;
         }
-        .gauge-wrapper {
-            position: relative;
-            width: 90%; 
-            height: 100%;
-        }
-
-        /* PHẦN 2 & 3: THÔNG TIN (CHIẾM 40% CHIỀU CAO) */
+        .gauge-wrapper { position: relative; width: 90%; height: 100%; }
         .info-section {
-            flex: 4;
-            display: flex; 
-            flex-direction: row;
-            border-top: 1px solid #f1f5f9;
+            flex: 4; display: flex; flex-direction: row; border-top: 1px solid #f1f5f9;
         }
-
-        /* VÙNG 2: GIÁ TRỊ (BÊN TRÁI) */
         .aqi-value-box {
-            flex: 1; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            border-right: 1px solid #f1f5f9;
-            background: #f8fafc50;
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-right: 1px solid #f1f5f9; background: #f8fafc50;
         }
-        .aqi-number {
-            font-size: 5.5rem; font-weight: 900; line-height: 1; 
-            color: #1e293b; 
-            letter-spacing: -2px;
-        }
+        .aqi-number { font-size: 5.5rem; font-weight: 900; line-height: 1; color: #1e293b; letter-spacing: -2px; }
         .aqi-sub-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; margin-top: 5px; }
+        .aqi-status-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .aqi-status-text { font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin: 0; line-height: 1.2; text-align: center; transition: color 0.3s ease; }
+        .aqi-status-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
 
-        /* VÙNG 3: TRẠNG THÁI (BÊN PHẢI) */
-        .aqi-status-box {
-            flex: 1; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .aqi-status-text {
-            font-size: 2.2rem; font-weight: 800; text-transform: uppercase;
-            margin: 0; line-height: 1.2; text-align: center;
-            transition: color 0.3s ease;
-        }
-        .aqi-status-label { 
-            font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px;
-        }
-
-        /* 2. CHARTS GRID */
+        /* --- 2. CHARTS GRID --- */
         .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .chart-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
@@ -126,25 +94,83 @@
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* RIGHT COLUMN */
+        /* --- 3. RIGHT COLUMN (ĐÃ CHIA BỐ CỤC 50/50) --- */
         .right-col-grid {
-            height: var(--row-height); 
+            /* Chiều cao khớp với Row Height */
+            height: var(--row-height);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        /* PHẦN A: 4 Widget Nhỏ (Nửa trên) */
+        .mini-widgets-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-            gap: 20px;
+            gap: 20px; 
+            flex: 1; /* Chiếm 50% chiều cao */
         }
         .widget {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 15px; border: 1px solid #f1f5f9;
-            aspect-ratio: 1/1; 
+            text-align: center; padding: 15px; border: 1px solid #f1f5f9; 
+            height: 100%; /* Đảm bảo full chiều cao ô chứa */
         }
-        .w-icon { font-size: 2.5rem; margin-bottom: 10px; }
-        .w-label { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .w-val { font-size: 2.8rem; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: #334155; }
-        .w-unit { font-size: 1rem; font-weight: 600; color: #94a3b8; }
-
+        .w-icon { font-size: 2rem; margin-bottom: 5px; }
+        .w-label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .w-val { font-size: 2.2rem; font-weight: 800; margin: 2px 0; letter-spacing: -1px; color: #334155; }
+        .w-unit { font-size: 0.9rem; font-weight: 600; color: #94a3b8; }
         .c-temp { color: #f59e0b; } .c-humi { color: #3b82f6; } .c-pm { color: #10b981; } .c-co { color: #ef4444; }
+
+        /* PHẦN B: CONTROL HUB (Nửa dưới) */
+        .control-hub {
+            background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
+            flex: 1; /* Chiếm 50% chiều cao còn lại */
+            display: flex; flex-direction: column;
+            overflow: hidden; border: 1px solid #f1f5f9;
+        }
+
+        /* Chia đôi Control Hub: Trên (Time) - Dưới (Buttons) */
+        .hub-header {
+            flex: 1; display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 0;
+        }
+        .hub-cell {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .hub-cell.separator { border-right: 1px solid #e2e8f0; }
+
+        .time-display { font-size: 2.8rem; font-weight: 800; color: #1e293b; line-height: 1; letter-spacing: -2px; }
+        .date-day { font-size: 0.9rem; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 2px; }
+        .date-full { font-size: 1.2rem; font-weight: 800; color: #334155; letter-spacing: -0.5px; }
+
+        .hub-buttons {
+            flex: 1.2; display: flex; gap: 15px; padding: 15px;
+            background: #f8fafc;
+        }
+
+        .ctrl-btn {
+            flex: 1; background: #ffffff; border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .ctrl-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .ctrl-btn:active { transform: scale(0.98); }
+
+        .btn-icon-circle {
+            width: 38px; height: 38px; background: #f1f5f9; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; margin-bottom: 6px; transition: 0.3s;
+        }
+        .btn-label { font-size: 0.85rem; font-weight: 700; color: #475569; }
+        .btn-status { font-size: 0.7rem; font-weight: 600; color: #94a3b8; margin-top: 2px; }
+
+        .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
+        .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
+        .ctrl-btn.active .btn-label { color: #065f46; }
+        .ctrl-btn.active .btn-status { color: var(--primary-green); }
+
     </style>
 </head>
 <body>
@@ -162,13 +188,9 @@
         <div class="left-col">
             <div class="aqi-card">
                 <div class="card-label">AQI INDEX</div>
-                
                 <div class="gauge-section">
-                    <div class="gauge-wrapper">
-                        <canvas id="gaugeCanvas"></canvas>
-                    </div>
+                    <div class="gauge-wrapper"><canvas id="gaugeCanvas"></canvas></div>
                 </div>
-                
                 <div class="info-section">
                     <div class="aqi-value-box">
                         <div class="aqi-sub-label">Current Value</div>
@@ -202,29 +224,56 @@
         </div>
 
         <div class="right-col-grid">
-            <div class="widget">
-                <div class="w-icon">🌡️</div>
-                <div class="w-label">Temperature</div>
-                <div class="w-val c-temp" id="v-temp">--</div>
-                <div class="w-unit">°C</div>
+            <div class="mini-widgets-wrapper">
+                <div class="widget">
+                    <div class="w-icon">🌡️</div>
+                    <div class="w-label">Temperature</div>
+                    <div class="w-val c-temp" id="v-temp">--</div>
+                    <div class="w-unit">°C</div>
+                </div>
+                <div class="widget">
+                    <div class="w-icon">💧</div>
+                    <div class="w-label">Humidity</div>
+                    <div class="w-val c-humi" id="v-humi">--</div>
+                    <div class="w-unit">%</div>
+                </div>
+                <div class="widget">
+                    <div class="w-icon">🌫️</div>
+                    <div class="w-label">PM2.5</div>
+                    <div class="w-val c-pm" id="v-pm">--</div>
+                    <div class="w-unit">µg/m³</div>
+                </div>
+                <div class="widget">
+                    <div class="w-icon">🏭</div>
+                    <div class="w-label">CO Gas</div>
+                    <div class="w-val c-co" id="v-co">--</div>
+                    <div class="w-unit">ppm</div>
+                </div>
             </div>
-            <div class="widget">
-                <div class="w-icon">💧</div>
-                <div class="w-label">Humidity</div>
-                <div class="w-val c-humi" id="v-humi">--</div>
-                <div class="w-unit">%</div>
-            </div>
-            <div class="widget">
-                <div class="w-icon">🌫️</div>
-                <div class="w-label">PM2.5</div>
-                <div class="w-val c-pm" id="v-pm">--</div>
-                <div class="w-unit">µg/m³</div>
-            </div>
-            <div class="widget">
-                <div class="w-icon">🏭</div>
-                <div class="w-label">CO Gas</div>
-                <div class="w-val c-co" id="v-co">--</div>
-                <div class="w-unit">ppm</div>
+
+            <div class="control-hub">
+                <div class="hub-header">
+                    <div class="hub-cell separator">
+                        <div class="time-display" id="clock-time">--:--</div>
+                    </div>
+                    <div class="hub-cell">
+                        <div class="date-day" id="clock-day">--</div>
+                        <div class="date-full" id="clock-date">--/--/----</div>
+                    </div>
+                </div>
+
+                <div class="hub-buttons">
+                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')">
+                        <div class="btn-icon-circle">❄️</div>
+                        <div class="btn-label">Điều Hoà</div>
+                        <div class="btn-status">OFF</div>
+                    </div>
+                    <div class="ctrl-btn active" id="btn-fresh" onclick="toggleBtn('btn-fresh')">
+                        <div class="btn-icon-circle">🍃</div>
+                        <div class="btn-label">Khí Tươi</div>
+                        <div class="btn-status">ON</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -287,12 +336,10 @@
         afterDraw: (chart) => {
             const { ctx, width, height } = chart;
             const meta = chart.getDatasetMeta(0);
-            
             const cx = width / 2;
             const cy = height - (height * 0.15); 
             const outerR = meta.data[0].outerRadius;
             
-            // 1. VẼ KIM
             let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
             const angle = calculateNeedleAngle(val);
             const needleLen = outerR - 5; 
@@ -307,7 +354,6 @@
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
             ctx.restore();
 
-            // 2. VẼ SỐ (ĐÃ TINH CHỈNH VỊ TRÍ)
             const numbers = [0, 50, 100, 150, 200, 300, 500];
             const segmentAngle = Math.PI / 6;
             
@@ -316,28 +362,23 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Mảng offset thủ công: [x, y] cho từng số để căn chỉnh chính xác vào rãnh
+            // OFFSET TỐI ƯU CHO VÒNG CUNG ĐẸP NHẤT
             const manualOffsets = [
-                { r: 34, y: 35 },  // 0
-                { r: 24, y: 30 },  // 50
-                { r: 15, y: 35 },  // 100 (Hạ thấp bán kính & tăng Y để kéo xuống)
-                { r: 8, y: 40 },  // 150 (Đỉnh: Gần nhất)
-                { r: 15, y: 35 },  // 200 (Kéo xuống tương tự 100)
-                { r: 24, y: 30 },  // 300
-                { r: 34, y: 35 }   // 500
+                { r: 34, y: 22 },   // 0
+                { r: 24, y: 28 },   // 50
+                { r: 15, y: 35 },   // 100 (Kéo xuống vừa phải)
+                { r: 5,  y: 45 },   // 150 (Sát đỉnh)
+                { r: 15, y: 35 },   // 200 (Đối xứng 100)
+                { r: 24, y: 28 },   // 300
+                { r: 34, y: 22 }    // 500
             ];
 
             numbers.forEach((num, i) => {
                 const numAngle = Math.PI + (i * segmentAngle);
-                
-                // Lấy offset riêng cho từng số
                 const offset = manualOffsets[i];
                 const rNum = outerR + offset.r; 
-
                 const nx = cx + Math.cos(numAngle) * rNum;
-                // Cộng thêm offset.y để hạ thấp số xuống theo chiều dọc
                 const ny = cy + Math.sin(numAngle) * rNum + offset.y;
-                
                 ctx.fillText(num, nx, ny);
             });
         }
@@ -352,21 +393,14 @@
                 datasets: [{
                     data: [1, 1, 1, 1, 1, 1], 
                     backgroundColor: AQI_COLORS,
-                    borderColor: '#ffffff', 
-                    borderWidth: 2,
-                    cutout: '60%', 
-                    circumference: 180, 
-                    rotation: -90
+                    borderColor: '#ffffff', borderWidth: 2,
+                    cutout: '60%', circumference: 180, rotation: -90
                 }]
             },
             options: {
-                responsive: true, 
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                layout: { 
-                    // Padding vừa đủ để không cắt mất số 0 và 500
-                    padding: { top: 25, left: 30, right: 30, bottom: 0 } 
-                }
+                layout: { padding: { top: 25, left: 30, right: 30, bottom: 0 } }
             },
             plugins: [gaugePlugin]
         });
@@ -383,6 +417,27 @@
 
         fetchData();
         setInterval(fetchData, 20000);
+        setInterval(updateClock, 1000); // Chạy đồng hồ
+        updateClock();
+    }
+
+    function updateClock() {
+        const now = moment();
+        now.locale('vi'); // Tiếng Việt cho Thứ
+        document.getElementById('clock-time').innerText = now.format('HH:mm');
+        document.getElementById('clock-day').innerText = now.format('dddd');
+        document.getElementById('clock-date').innerText = now.format('DD/MM/YYYY');
+    }
+
+    function toggleBtn(id) {
+        const btn = document.getElementById(id);
+        const statusEl = btn.querySelector('.btn-status');
+        btn.classList.toggle('active');
+        if(btn.classList.contains('active')) {
+            statusEl.innerText = "ON";
+        } else {
+            statusEl.innerText = "OFF";
+        }
     }
 
     function setStatus(ok, msg) {
@@ -395,7 +450,6 @@
         const color = getColorForAQI(aqi);
         
         document.getElementById('aqi-val').innerText = aqi; 
-        
         const txtEl = document.getElementById('aqi-text');
         txtEl.innerText = getTextForAQI(aqi);
         txtEl.style.color = color;
