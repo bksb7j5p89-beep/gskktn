@@ -17,7 +17,7 @@
             --text-sub: #64748b;
             --radius: 24px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
-            --row-height: 460px; 
+            --row-height: 460px; /* Chiều cao chuẩn của khối AQI và khối Widget */
             --fixed-width: 1500px;
             --primary-green: #10b981;
         }
@@ -46,9 +46,10 @@
         .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* GRID LAYOUT */
+        /* MAIN GRID LAYOUT */
         .main-grid {
             display: grid;
+            /* Cột phải rộng 460px (bằng var(--row-height)) để đảm bảo widget vuông vức như cũ */
             grid-template-columns: 1fr var(--row-height); 
             gap: 24px; align-items: start;
         }
@@ -99,48 +100,50 @@
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* --- RIGHT COLUMN (ĐƯỢC CHỈNH SỬA) --- */
-        .right-col-grid {
-            /* Không set height cứng nữa để nó tự dãn theo nội dung bên trong */
+        /* --- RIGHT COLUMN CONTAINER (CỘT PHẢI MỚI) --- */
+        .right-column-container {
             display: flex; 
             flex-direction: column; 
-            gap: 24px; /* Gap này bằng với gap của cột trái để thẳng hàng */
+            gap: 24px; /* Khoảng cách bằng khoảng cách cột trái để thẳng hàng */
         }
-        
-        /* Wrapper cho 4 widget nhỏ phía trên */
-        .mini-widgets-wrapper {
+
+        /* CLASS CŨ: .right-col-grid
+           Giữ nguyên 100% thuộc tính của file gốc để 4 widget không bị đổi khác 
+        */
+        .right-col-grid {
+            height: var(--row-height); /* 460px */
             display: grid;
             grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
             gap: 20px;
-            /* Đặt chiều cao bằng thẻ AQI bên trái để đẩy cụm dưới xuống đúng vị trí ngang hàng đồ thị */
-            height: var(--row-height); 
         }
 
         .widget {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 15px; border: 1px solid #f1f5f9;
-            height: 100%; /* Full chiều cao của ô lưới */
+            aspect-ratio: 1/1; 
         }
-        .w-icon { font-size: 2.5rem; margin-bottom: 5px; }
+        .w-icon { font-size: 2.5rem; margin-bottom: 10px; }
         .w-label { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .w-val { font-size: 2.8rem; font-weight: 800; margin: 2px 0; letter-spacing: -1px; color: #334155; }
+        .w-val { font-size: 2.8rem; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: #334155; }
         .w-unit { font-size: 1rem; font-weight: 600; color: #94a3b8; }
+
         .c-temp { color: #f59e0b; } .c-humi { color: #3b82f6; } .c-pm { color: #10b981; } .c-co { color: #ef4444; }
 
-        /* --- CONTROL HUB (MỚI) --- */
+        /* --- CONTROL HUB (PHẦN MỚI THÊM) --- */
         .control-hub {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             /* Chiều cao bằng đúng 1 đồ thị (300px) */
             height: 300px; 
             display: flex; flex-direction: column;
             overflow: hidden; border: 1px solid #f1f5f9;
+            /* Chiều rộng sẽ tự động bằng chiều rộng của cột cha (.right-column-container), 
+               tức là bằng chiều rộng của .right-col-grid bên trên */
         }
 
-        /* Phần trên: Thời gian & Ngày */
+        /* Header: Time & Date */
         .hub-header {
-            flex: 1; /* Chia tỷ lệ */
-            display: flex;
+            flex: 1; display: flex;
             border-bottom: 1px solid #e2e8f0;
         }
         .hub-cell {
@@ -154,18 +157,18 @@
             line-height: 1; letter-spacing: -2px; 
         }
         .date-day { 
-            font-size: 1rem; font-weight: 600; color: #64748b; 
-            text-transform: uppercase; margin-bottom: 3px; 
+            font-size: 1.1rem; font-weight: 600; color: #64748b; 
+            text-transform: uppercase; margin-bottom: 5px; 
         }
         .date-full { 
-            font-size: 1.5rem; font-weight: 800; color: #334155; 
-            letter-spacing: -0.5px; 
+            font-size: 1.8rem; /* Ngày to rõ theo yêu cầu */
+            font-weight: 800; color: #334155; 
+            letter-spacing: -1px; 
         }
 
-        /* Phần dưới: Nút bấm */
+        /* Buttons */
         .hub-buttons {
-            flex: 1.3; /* Tỷ lệ lớn hơn chút để nút to */
-            display: flex; gap: 20px; padding: 20px;
+            flex: 1.2; display: flex; gap: 20px; padding: 20px;
             background: #f8fafc;
         }
 
@@ -186,7 +189,6 @@
         .btn-label { font-size: 1rem; font-weight: 700; color: #475569; }
         .btn-status { font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-top: 4px; }
 
-        /* Trạng thái Active */
         .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
         .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
         .ctrl-btn.active .btn-label { color: #065f46; }
@@ -244,9 +246,9 @@
             </div>
         </div>
 
-        <div class="right-col-grid">
+        <div class="right-column-container">
             
-            <div class="mini-widgets-wrapper">
+            <div class="right-col-grid">
                 <div class="widget">
                     <div class="w-icon">🌡️</div>
                     <div class="w-label">Temperature</div>
@@ -379,7 +381,7 @@
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
             ctx.restore();
 
-            // 2. VẼ SỐ (ĐÃ TINH CHỈNH VỊ TRÍ NHƯ CŨ)
+            // 2. VẼ SỐ (ĐÃ TINH CHỈNH VỊ TRÍ)
             const numbers = [0, 50, 100, 150, 200, 300, 500];
             const segmentAngle = Math.PI / 6;
             
