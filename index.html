@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Giám Sát Không Khí</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- PHẦN CSS: TRANG TRÍ GIAO DIỆN --- */
+        :root {
+            /* Định nghĩa các màu sắc chuẩn AQI (EPA) */
+            --color-good: #00e676;      /* Tốt - Xanh lá */
+            --color-moderate: #ffeb3b;  /* Trung bình - Vàng */
+            --color-unhealthy-sen: #ff9800; /* Kém - Cam */
+            --color-unhealthy: #f44336; /* Xấu - Đỏ */
+            --color-very-unhealthy: #9c27b0; /* Rất xấu - Tím */
+            --color-hazardous: #795548; /* Nguy hại - Nâu */
+
+            /* Màu nền giao diện tối */
+            --bg-main: #121212;
+            --bg-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-weight: 500;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Container chính chứa các widget */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Mặc định 1 cột trên mobile */
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Card cơ bản */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            border: 2px solid transparent; /* Viền trong suốt để chờ đổi màu */
+        }
+        
+        .card:hover { transform: translateY(-3px); }
+
+        .card-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .card-unit {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* --- TÙY BIẾN THẺ AQI LỚN (GAUGE) --- */
+        .aqi-card {
+            grid-column: 1 / -1; /* Chiếm hết chiều ngang */
+            padding: 30px;
+            position: relative;
+        }
+
+        /* Tạo vòng tròn Gauge bằng CSS thuần (Conic Gradient) */
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            /* Gradient này sẽ được JS cập nhật để quay */
+            background: conic-gradient(var(--accent-color, var(--color-good)) 0deg, var(--bg-main) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2) inset;
+        }
+        
+        /* Lớp phủ bên trong để tạo thành hình chiếc nhẫn */
+        .gauge-inner {
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            background-color: var(--bg-card);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .aqi-value { font-size: 4rem; line-height: 1; font-weight: 700; color: var(--accent-color, var(--text-primary)); transition: color 0.5s;}
+        .aqi-title { font-size: 1.2rem; color: var(--text-secondary); }
+        
+        /* Trạng thái chữ AQI (Tốt, Xấu...) */
+        .aqi-status-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--accent-color, var(--text-secondary));
+            transition: color 0.5s;
+            margin-top: 10px;
+        }
+
+        /* --- TÙY BIẾN CÁC THẺ NHỎ --- */
+        /* Màu sắc riêng cho từng loại thẻ khi giá trị thay đổi */
+        .temp-card.hot { border-color: #ff5722; } .temp-card.hot .card-value { color: #ff5722; }
+        .temp-card.cold { border-color: #2196f3; } .temp-card.cold .card-value { color: #2196f3; }
+        
+        .humi-card.wet { border-color: #3f51b5; } .humi-card.wet .card-value { color: #3f51b5; }
+        .humi-card.dry { border-color: #ffc107; } .humi-card.dry .card-value { color: #ffc107; }
+
+        /* Footer thời gian */
+        .last-update {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+        }
+        .blink { animation: blinker 1.5s linear infinite; color: var(--color-good); margin-right: 5px;}
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Responsive cho màn hình lớn hơn (Tablet/PC) */
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(4, 1fr); /* 4 cột */
+            }
+            /* AQI chiếm 2 cột giữa cho đẹp */
+            .aqi-card { grid-column: span 4; display: flex; flex-direction: row; justify-content: space-around; align-items: center;}
+            .gauge-wrapper { margin-right: 30px; }
+            .aqi-info-wrapper { text-align: left; flex-grow: 1; display: flex; flex-direction: column; align-items: flex-start;}
+             .aqi-status-text { font-size: 2.5rem;}
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📡 Giám Sát Chất Lượng Không Khí</h1>
+
+    <div class="dashboard-grid">
+        <div class="card aqi-card" id="aqi-card-container">
+            <div class="gauge-wrapper">
+                <div class="gauge-container" id="aqi-gauge">
+                    <div class="gauge-inner">
+                        <div class="aqi-title">AQI</div>
+                        <div class="aqi-value" id="aqi-val">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="aqi-info-wrapper">
+                <div class="card-label">Trạng thái không khí</div>
+                <div class="aqi-status-text" id="aqi-status">Đang tải...</div>
+            </div>
+        </div>
+
+        <div class="card temp-card" id="temp-card">
+            <div class="card-label">🌡️ Nhiệt độ</div>
+            <div><span class="card-value" id="temp-val">--</span> <span class="card-unit">°C</span></div>
+        </div>
+
+        <div class="card humi-card" id="humi-card">
+            <div class="card-label">💧 Độ ẩm</div>
+            <div><span class="card-value" id="humi-val">--</span> <span class="card-unit">%</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-label">☁️ Bụi PM2.5</div>
+            <div><span class="card-value" id="pm25-val">--</span> <span class="card-unit">µg/m³</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-label">🏭 Khí CO</div>
+            <div><span class="card-value" id="co-val">--</span> <span class="card-unit">ppm</span></div>
+        </div>
+    </div>
+
+    <div class="last-update">
+        <span class="blink">●</span> <span id="last-updated-time">Đang kết nối máy chủ...</span>
+    </div>
+
+
+    <script>
+        /* --- PHẦN JAVASCRIPT: XỬ LÝ DỮ LIỆU --- */
+
+        // ==================================================================
+        // 👇👇👇 THAY TOKEN CỦA BẠN VÀO DÒNG DƯỚI ĐÂY 👇👇👇
+        const DEVICE_ACCESS_TOKEN = '316ilvbcgepz011xsrey'; 
+        // ==================================================================
+        
+        const THINGSBOARD_HOST = 'https://thingsboard.cloud'; // Máy chủ ThingsBoard
+
+        // Hàm chính để gọi dữ liệu
+        async function fetchData() {
+            // Danh sách các key cần lấy
+            const keys = 'aqi,temperature,humidity,pm25,co';
+            const url = `${THINGSBOARD_HOST}/api/v1/${DEVICE_ACCESS_TOKEN}/telemetry?keys=${keys}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Lỗi HTTP! Status: ${response.status}`);
+                const data = await response.json();
+                updateUI(data); // Gọi hàm cập nhật giao diện
+                updateLastSeen(); // Cập nhật thời gian
+            } catch (error) {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+                document.getElementById('aqi-status').innerText = 'Mất kết nối!';
+                document.getElementById('aqi-status').style.color = 'var(--text-secondary)';
+                document.getElementById('last-updated-time').innerText = 'Lỗi kết nối: ' + error.message;
+                 document.querySelector('.blink').style.color = 'red';
+            }
+        }
+
+        // Hàm cập nhật giao diện (UI) dựa trên dữ liệu mới
+        function updateUI(data) {
+            // Helper để lấy giá trị an toàn từ JSON
+            const getValue = (key, fix = 0) => (data[key] && data[key][0]) ? Number(data[key][0].value).toFixed(fix) : '--';
+
+            // 1. Cập nhật các số liệu cơ bản
+            const tempStr = getValue('temperature', 1);
+            const humiStr = getValue('humidity', 0);
+            
+            document.getElementById('temp-val').innerText = tempStr;
+            document.getElementById('humi-val').innerText = humiStr;
+            document.getElementById('pm25-val').innerText = getValue('pm25', 0);
+            document.getElementById('co-val').innerText = getValue('co', 2);
+
+            // 2. Xử lý màu sắc cho Nhiệt độ & Độ ẩm
+            updateCardStyle('temp-card', Number(tempStr), 20, 30, 'cold', 'hot'); // Lạnh < 20, Nóng > 30
+            updateCardStyle('humi-card', Number(humiStr), 40, 70, 'dry', 'wet');  // Khô < 40, Ẩm > 70
+
+            // 3. XỬ LÝ ĐẶC BIỆT CHO AQI (GAUGE & TRẠNG THÁI)
+            const aqiVal = (data['aqi'] && data['aqi'][0]) ? Number(data['aqi'][0].value) : 0;
+            updateAQIDisplay(aqiVal);
+        }
+
+        // Hàm xử lý hiển thị AQI (Màu sắc, Trạng thái chữ, Vòng quay)
+        function updateAQIDisplay(aqi) {
+            const aqiValEl = document.getElementById('aqi-val');
+            const aqiStatusEl = document.getElementById('aqi-status');
+            const aqiGaugeEl = document.getElementById('aqi-gauge');
+            const aqiCardContainer = document.getElementById('aqi-card-container');
+
+            // Hiển thị số
+            aqiValEl.innerText = aqi > 0 ? aqi.toFixed(0) : '--';
+
+            // Xác định trạng thái AQI theo chuẩn EPA
+            let statusInfo = { text: 'Chưa có t.tin', colorVar: '--text-secondary', percent: 0 };
+
+            if (aqi > 0) {
+                if (aqi <= 50)      statusInfo = { text: 'Tốt (An toàn)', colorVar: '--color-good', percent: aqi/500 };
+                else if (aqi <= 100) statusInfo = { text: 'Trung bình', colorVar: '--color-moderate', percent: aqi/500 };
+                else if (aqi <= 150) statusInfo = { text: 'Kém (Nhóm nhạy cảm)', colorVar: '--color-unhealthy-sen', percent: aqi/500 };
+                else if (aqi <= 200) statusInfo = { text: 'Xấu (Có hại)', colorVar: '--color-unhealthy', percent: aqi/500 };
+                else if (aqi <= 300) statusInfo = { text: 'Rất Xấu (Nguy hại)', colorVar: '--color-very-unhealthy', percent: aqi/500 };
+                else                 statusInfo = { text: 'Nguy Hiểm (Khẩn cấp)', colorVar: '--color-hazardous', percent: aqi/500 };
+            }
+
+            // Cập nhật chữ trạng thái và màu sắc chủ đạo
+            aqiStatusEl.innerText = statusInfo.text;
+            
+            // Gán biến CSS để đổi màu toàn bộ cụm AQI
+            aqiCardContainer.style.setProperty('--accent-color', `var(${statusInfo.colorVar})`);
+
+            // Cập nhật vòng quay Gauge (Conic Gradient)
+            // Tính góc quay dựa trên tỉ lệ AQI (max 500)
+            const deg = Math.min(statusInfo.percent * 360, 360); 
+            aqiGaugeEl.style.background = `conic-gradient(var(${statusInfo.colorVar}) ${deg}deg, var(--bg-main) ${deg}deg)`;
+        }
+
+        // Hàm phụ trợ đổi màu thẻ Nhiệt/Ẩm
+        function updateCardStyle(cardId, value, lowThreshold, highThreshold, lowClass, highClass) {
+            const card = document.getElementById(cardId);
+            card.classList.remove(lowClass, highClass); // Reset class cũ
+            if (value !== '--' && !isNaN(value)) {
+                if (value < lowThreshold) card.classList.add(lowClass);
+                else if (value > highThreshold) card.classList.add(highClass);
+            }
+        }
+
+        // Hàm cập nhật thời gian
+        function updateLastSeen() {
+            const now = new Date();
+            document.getElementById('last-updated-time').innerText = `Cập nhật lúc: ${now.toLocaleTimeString()}`;
+             document.querySelector('.blink').style.color = 'var(--color-good)';
+        }
+
+        // --- CHẠY CHƯƠNG TRÌNH ---
+        fetchData(); // Gọi lần đầu ngay khi mở web
+        setInterval(fetchData, 5000); // Tự động cập nhật mỗi 5 giây
+    </script>
+</body>
+</html>
