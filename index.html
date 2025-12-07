@@ -3,517 +3,488 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giám sát Chất lượng Không khí - Phòng Khách</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Dashboard Chất lượng Không khí</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/vi.min.js"></script>
 
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --secondary-text: #666;
-            --shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
-            --radius: 12px;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
             margin: 0;
             padding: 20px;
-            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .header {
+        h1 {
             margin-bottom: 20px;
-        }
-
-        .header h1 {
-            margin: 0;
+            font-size: 24px;
             font-weight: 700;
-            font-size: 28px;
         }
 
-        /* Grid Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Chia đôi màn hình: Trái AQI, Phải 4 thẻ */
+        /* --- CONTAINER CHÍNH --- */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-            margin-bottom: 20px;
         }
 
-        /* Responsive cho Mobile */
-        @media (max-width: 900px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
+        /* --- HÀNG 1: AQI (Trái) + 4 Widget nhỏ (Phải) --- */
+        .top-section {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr; /* Bên trái lớn hơn bên phải chút */
+            gap: 20px;
         }
 
-        /* Card Styles */
+        /* Card chung */
         .card {
-            background: var(--card-bg);
+            background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             position: relative;
+            overflow: hidden;
         }
 
-        /* --- AQI Section (Left) --- */
-        .aqi-container {
-            grid-column: 1 / 2;
-            min-height: 350px;
-            display: flex;
-            flex-direction: column;
+        /* --- AQI GAUGE (Bên trái) --- */
+        .aqi-card {
+            aspect-ratio: 16/9; /* Khoá tỷ lệ khung AQI */
             justify-content: space-between;
+            padding-bottom: 30px;
         }
 
-        .aqi-gauge-wrapper {
+        .chart-wrapper-gauge {
             position: relative;
-            width: 100%;
-            height: 250px;
+            width: 90%;
+            height: 80%; /* Dành không gian cho biểu đồ */
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end; /* Đẩy biểu đồ xuống đáy của vùng chứa */
         }
 
-        .aqi-value-display {
-            position: absolute;
-            bottom: 30px;
+        .aqi-info {
             text-align: center;
+            margin-top: -30px; /* Kéo số liệu lên gần kim hơn */
+            z-index: 10;
         }
 
         .aqi-number {
-            font-size: 48px;
-            font-weight: bold;
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
             display: block;
         }
 
         .aqi-status {
-            font-size: 18px;
-            font-weight: 500;
+            font-size: 1.5rem;
+            font-weight: 600;
             text-transform: uppercase;
             margin-top: 5px;
             display: block;
         }
 
-        /* --- Sensor Grid (Right) --- */
-        .sensors-grid {
+        .aqi-label-title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* --- 4 WIDGET NHỎ (Bên phải) --- */
+        .widgets-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .sensor-card {
+        .mini-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            height: 100%;
+            aspect-ratio: 4/3; /* Khoá tỷ lệ các thẻ nhỏ */
         }
 
-        .sensor-label {
-            font-size: 14px;
-            color: var(--secondary-text);
-            margin-bottom: 10px;
-            font-weight: 500;
+        .mini-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
         }
 
-        .sensor-value {
-            font-size: 32px;
+        .mini-value {
+            font-size: 2rem;
             font-weight: 700;
         }
-        
-        .unit {
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--secondary-text);
+
+        .mini-unit {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
 
-        /* Màu sắc cho từng icon/giá trị */
-        .color-temp { color: #f39c12; }
-        .color-humi { color: #3498db; }
-        .color-pm { color: #27ae60; }
-        .color-co { color: #e74c3c; }
+        /* Màu sắc chỉ số */
+        .text-temp { color: #f59e0b; }
+        .text-humi { color: #3b82f6; }
+        .text-pm { color: #10b981; }
+        .text-co { color: #ef4444; }
 
-        .last-update {
-            margin-top: 8px;
-            font-size: 11px;
-            color: #999;
+        /* --- HÀNG 2: 4 BIỂU ĐỒ (Charts) --- */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 cột */
+            gap: 20px;
         }
 
-        /* --- Chart Section (Bottom) --- */
-        .chart-container {
-            background: var(--card-bg);
+        .chart-card {
+            background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 20px;
-            height: 400px;
+            padding: 15px;
+            aspect-ratio: 16/9; /* Khoá tỷ lệ đồ thị */
+            position: relative;
         }
 
-        .chart-header {
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            gap: 5px;
         }
         
-        .chart-title {
-            font-weight: 600;
-            font-size: 18px;
+        .chart-container-inner {
+            position: relative;
+            height: 85%;
+            width: 100%;
         }
 
-        /* Loading Overlay */
-        #loading {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            font-size: 20px;
-            font-weight: bold;
+        /* --- FOOTER --- */
+        .footer-info {
+            margin-top: 30px;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* RESPONSIVE: Mobile */
+        @media (max-width: 768px) {
+            .top-section {
+                grid-template-columns: 1fr; /* Chuyển thành 1 cột */
+            }
+            .charts-section {
+                grid-template-columns: 1fr; /* Đồ thị xếp dọc */
+            }
+            .aqi-card {
+                aspect-ratio: auto;
+                height: 300px;
+            }
+            .mini-card {
+                aspect-ratio: auto;
+                height: 120px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="loading">Đang tải dữ liệu từ ThingSpeak...</div>
+    <h1>Phòng Khách</h1>
 
-    <div class="header">
-        <h1>Phòng Khách</h1>
-    </div>
-
-    <div class="dashboard-grid">
-        <div class="card aqi-container">
-            <div style="font-size: 20px; font-weight: 600; width: 100%; text-align: center;">Chỉ số AQI</div>
-            <div class="aqi-gauge-wrapper">
-                <canvas id="aqiGauge"></canvas>
-                <div class="aqi-value-display">
+    <div class="dashboard-container">
+        
+        <div class="top-section">
+            <div class="card aqi-card">
+                <div class="aqi-label-title">Chỉ số AQI</div>
+                <div class="chart-wrapper-gauge">
+                    <canvas id="aqiGauge"></canvas>
+                </div>
+                <div class="aqi-info">
                     <span id="aqi-val" class="aqi-number">--</span>
                     <span id="aqi-text" class="aqi-status">--</span>
                 </div>
             </div>
-            <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 10px;">
-                0-50: Tốt | 51-100: TB | 101-150: Kém | 151-200: Xấu | >200: Nguy hại
+
+            <div class="widgets-grid">
+                <div class="mini-card">
+                    <div class="mini-label">Nhiệt độ</div>
+                    <div class="mini-value text-temp">
+                        <span id="temp-val">--</span><span class="mini-unit">°C</span>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-label">Độ ẩm</div>
+                    <div class="mini-value text-humi">
+                        <span id="humi-val">--</span><span class="mini-unit">%</span>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-label">Bụi PM2.5</div>
+                    <div class="mini-value text-pm">
+                        <span id="pm-val">--</span><span class="mini-unit">µg/m³</span>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-label">Khí CO</div>
+                    <div class="mini-value text-co">
+                        <span id="co-val">--</span><span class="mini-unit">ppm</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="sensors-grid">
-            <div class="card sensor-card">
-                <div class="sensor-label">Nhiệt độ</div>
-                <div class="sensor-value color-temp">
-                    <span id="temp-val">--</span> <span class="unit">°C</span>
-                </div>
-                <div class="last-update" id="temp-time">Đang cập nhật...</div>
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title"><span style="color:#f59e0b">●</span> Diễn biến Nhiệt độ (°C)</div>
+                <div class="chart-container-inner"><canvas id="chartTemp"></canvas></div>
             </div>
-
-            <div class="card sensor-card">
-                <div class="sensor-label">Độ ẩm</div>
-                <div class="sensor-value color-humi">
-                    <span id="humi-val">--</span> <span class="unit">%</span>
-                </div>
-                <div class="last-update" id="humi-time">Đang cập nhật...</div>
+            <div class="chart-card">
+                <div class="chart-title"><span style="color:#3b82f6">●</span> Diễn biến Độ ẩm (%)</div>
+                <div class="chart-container-inner"><canvas id="chartHumi"></canvas></div>
             </div>
-
-            <div class="card sensor-card">
-                <div class="sensor-label">Bụi PM2.5</div>
-                <div class="sensor-value color-pm">
-                    <span id="pm-val">--</span> <span class="unit">µg/m³</span>
-                </div>
-                <div class="last-update" id="pm-time">Đang cập nhật...</div>
+            <div class="chart-card">
+                <div class="chart-title"><span style="color:#10b981">●</span> Diễn biến Bụi PM2.5</div>
+                <div class="chart-container-inner"><canvas id="chartPM"></canvas></div>
             </div>
-
-            <div class="card sensor-card">
-                <div class="sensor-label">Khí CO</div>
-                <div class="sensor-value color-co">
-                    <span id="co-val">--</span> <span class="unit">ppm</span>
-                </div>
-                <div class="last-update" id="co-time">Đang cập nhật...</div>
+            <div class="chart-card">
+                <div class="chart-title"><span style="color:#ef4444">●</span> Diễn biến Khí CO</div>
+                <div class="chart-container-inner"><canvas id="chartCO"></canvas></div>
             </div>
         </div>
+
     </div>
 
-    <div class="chart-container">
-        <div class="chart-header">
-            <div class="chart-title">Biểu đồ theo dõi (Gần nhất)</div>
-        </div>
-        <div style="position: relative; height: 320px; width: 100%">
-            <canvas id="historyChart"></canvas>
-        </div>
+    <div class="footer-info" id="global-update-time">
+        Đang tải dữ liệu...
     </div>
 
     <script>
         // ================================================================
-        // CẤU HÌNH THINGSPEAK (BẠN HÃY SỬA Ở ĐÂY)
+        // CẤU HÌNH (THAY ĐỔI THÔNG TIN CỦA BẠN TẠI ĐÂY)
         // ================================================================
-        const CHANNEL_ID = '3195067';      // <--- Thay Channel ID của bạn vào đây
-        const READ_API_KEY = '5NY52VK6EWBE41LC';  // <--- Thay Read API Key của bạn vào đây (Nếu kênh công khai thì để trống cũng được)
+        const CHANNEL_ID = '0000000';      // <-- Thay ID kênh của bạn
+        const READ_API_KEY = 'XXXXXXXX';  // <-- Thay Read Key (nếu kênh private)
         // ================================================================
 
-        // Cấu hình Field Mapping (Dựa trên code Arduino của bạn)
-        // Field 1: AQI, Field 2: PM2.5, Field 3: CO, Field 4: Temp, Field 5: Humi
-        const FIELDS = {
-            aqi: 'field1',
-            pm: 'field2',
-            co: 'field3',
-            temp: 'field4',
-            humi: 'field5'
-        };
+        // Mapping Field (Dựa trên code Arduino)
+        const FIELDS = { aqi: 'field1', pm: 'field2', co: 'field3', temp: 'field4', humi: 'field5' };
 
-        // Biến lưu trữ Chart
-        let mainChart;
         let gaugeChart;
+        let charts = {}; // Lưu trữ 4 biểu đồ
 
-        // Hàm khởi tạo Gauge Chart (Doughnut Chart modified)
+        // --- 1. CẤU HÌNH GAUGE (AQI) ---
         function initGauge() {
             const ctx = document.getElementById('aqiGauge').getContext('2d');
             gaugeChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
+                    // Chia đều 6 phần để màu sắc cân bằng trực quan
                     labels: ['Tốt', 'Trung bình', 'Kém', 'Xấu', 'Rất xấu', 'Nguy hại'],
                     datasets: [{
-                        data: [50, 50, 50, 50, 100, 200], // Các khoảng giá trị AQI
+                        data: [1, 1, 1, 1, 1, 1], // Mỗi phần bằng nhau về mặt hình ảnh
                         backgroundColor: [
-                            '#00e400', // Tốt (0-50) Green
-                            '#ffff00', // TB (51-100) Yellow
-                            '#ff7e00', // Kém (101-150) Orange
-                            '#ff0000', // Xấu (151-200) Red
-                            '#8f3f97', // Rất xấu (201-300) Purple
-                            '#7e0023'  // Nguy hại (>300) Maroon
+                            '#00E400', // Tốt (Green)
+                            '#FFFF00', // TB (Yellow)
+                            '#FF7E00', // Kém (Orange)
+                            '#FF0000', // Xấu (Red)
+                            '#8F3F97', // Rất xấu (Purple)
+                            '#7E0023'  // Nguy hại (Maroon)
                         ],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        borderWidth: 2,
+                        borderColor: '#fff',
+                        hoverOffset: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    rotation: -90,      // Bắt đầu từ góc 9 giờ
-                    circumference: 180, // Chỉ vẽ nửa vòng tròn
-                    cutout: '80%',      // Độ dày của vòng tròn
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false } // Tắt tooltip để giống đồng hồ
-                    }
+                    rotation: -90,      
+                    circumference: 180, 
+                    cutout: '85%',      // Vòng tròn mỏng hơn cho đẹp
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
                 },
                 plugins: [{
                     id: 'needle',
-                    afterDatasetDraw: function(chart, args, options) {
-                        const { ctx, config, data, chartArea: { top, bottom, left, right, width, height } } = chart;
-                        
-                        // Giá trị AQI hiện tại
-                        let currentVal = parseInt(document.getElementById('aqi-val').innerText) || 0;
-                        if (currentVal > 500) currentVal = 500;
-                        if (currentVal < 0) currentVal = 0;
+                    afterDatasetDraw: function(chart) {
+                        const { ctx, width, height } = chart;
+                        let aqiVal = parseInt(document.getElementById('aqi-val').innerText) || 0;
+                        if(aqiVal < 0) aqiVal = 0;
+                        if(aqiVal > 500) aqiVal = 500;
 
-                        // Tính góc cho kim chỉ
-                        const totalMax = 500; 
-                        const angle = Math.PI + (currentVal / totalMax) * Math.PI;
+                        // Tính góc kim: Map giá trị 0-500 sang góc 0-180 (Pi)
+                        // Công thức: (Value / Max) * PI
+                        const angle = Math.PI + (aqiVal / 500) * Math.PI;
 
-                        // Tọa độ tâm
                         const cx = width / 2;
-                        const cy = height - (height * 0.2); // Điều chỉnh tâm một chút xuống dưới
+                        const cy = height - (height * 0.15); // Tâm xoay
 
-                        // Vẽ kim
                         ctx.save();
-                        ctx.translate(cx, cy + 30); // Dịch chuyển context về tâm
+                        ctx.translate(cx, cy);
                         ctx.rotate(angle);
                         
-                        // Vẽ tam giác kim
+                        // Vẽ kim
                         ctx.beginPath();
                         ctx.moveTo(0, -5);
-                        ctx.lineTo(height / 1.5, 0); // Độ dài kim
+                        ctx.lineTo(height / 1.8, 0); // Chiều dài kim
                         ctx.lineTo(0, 5);
-                        ctx.fillStyle = '#333';
+                        ctx.fillStyle = '#374151';
                         ctx.fill();
                         
-                        // Vẽ chấm tròn ở tâm kim
+                        // Vẽ chốt kim
                         ctx.beginPath();
                         ctx.arc(0, 0, 8, 0, Math.PI * 2);
-                        ctx.fillStyle = '#333';
+                        ctx.fillStyle = '#374151';
                         ctx.fill();
-                        
                         ctx.restore();
                     }
                 }]
             });
         }
 
-        // Hàm khởi tạo Line Chart
-        function initHistoryChart() {
-            const ctx = document.getElementById('historyChart').getContext('2d');
-            mainChart = new Chart(ctx, {
+        // --- 2. CẤU HÌNH CHART NHỎ (4 Charts) ---
+        function createLineChart(canvasId, color, label) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: [],
-                    datasets: [
-                        {
-                            label: 'Nhiệt độ (°C)',
-                            borderColor: '#f39c12',
-                            backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                            data: [],
-                            yAxisID: 'y',
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Độ ẩm (%)',
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            data: [],
-                            yAxisID: 'y',
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Bụi PM2.5',
-                            borderColor: '#27ae60',
-                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                            data: [],
-                            yAxisID: 'y1',
-                            tension: 0.3
-                        },
-                        {
-                            label: 'CO (ppm)',
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                            data: [],
-                            yAxisID: 'y1',
-                            tension: 0.3
-                        }
-                    ]
+                    datasets: [{
+                        label: label,
+                        data: [],
+                        borderColor: color,
+                        backgroundColor: color + '20', // Màu nền nhạt (Hex + Opacity)
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4, // Đường cong mềm mại
+                        pointRadius: 0, // Ẩn điểm để đồ thị sạch hơn
+                        pointHoverRadius: 4
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            ticks: { maxTicksLimit: 10 }
-                        },
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            title: { display: true, text: 'Temp / Humi' }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            grid: { drawOnChartArea: false },
-                            title: { display: true, text: 'PM2.5 / CO' }
+                        x: { display: false }, // Ẩn trục X cho gọn
+                        y: { 
+                            beginAtZero: false,
+                            grid: { color: '#f3f4f6' },
+                            ticks: { font: { size: 10 } }
                         }
-                    }
+                    },
+                    interaction: { mode: 'index', intersect: false }
                 }
             });
         }
 
-        // Hàm cập nhật trạng thái AQI Text
-        function updateAqiStatus(aqi) {
-            const el = document.getElementById('aqi-text');
-            const numEl = document.getElementById('aqi-val');
+        function initCharts() {
+            charts.temp = createLineChart('chartTemp', '#f59e0b', 'Nhiệt độ');
+            charts.humi = createLineChart('chartHumi', '#3b82f6', 'Độ ẩm');
+            charts.pm   = createLineChart('chartPM',   '#10b981', 'Bụi PM2.5');
+            charts.co   = createLineChart('chartCO',   '#ef4444', 'Khí CO');
+        }
+
+        // --- 3. XỬ LÝ DỮ LIỆU ---
+        function updateAqiDisplay(aqi) {
+            const elText = document.getElementById('aqi-text');
+            const elVal = document.getElementById('aqi-val');
             
-            numEl.innerText = aqi;
+            elVal.innerText = aqi;
+            
+            let status = "", color = "";
+            if (aqi <= 50) { status = "Tốt"; color = "#00E400"; }
+            else if (aqi <= 100) { status = "Trung bình"; color = "#CCCC00"; }
+            else if (aqi <= 150) { status = "Kém"; color = "#FF7E00"; }
+            else if (aqi <= 200) { status = "Xấu"; color = "#FF0000"; }
+            else if (aqi <= 300) { status = "Rất xấu"; color = "#8F3F97"; }
+            else { status = "Nguy hại"; color = "#7E0023"; }
 
-            if (aqi <= 50) { el.innerText = "Tốt"; el.style.color = "#00e400"; }
-            else if (aqi <= 100) { el.innerText = "Trung Bình"; el.style.color = "#cccc00"; }
-            else if (aqi <= 150) { el.innerText = "Kém"; el.style.color = "#ff7e00"; }
-            else if (aqi <= 200) { el.innerText = "Xấu"; el.style.color = "#ff0000"; }
-            else if (aqi <= 300) { el.innerText = "Rất Xấu"; el.style.color = "#8f3f97"; }
-            else { el.innerText = "Nguy Hại"; el.style.color = "#7e0023"; }
-
-            // Redraw gauge needle
+            elText.innerText = status;
+            elText.style.color = color;
+            
             if(gaugeChart) gaugeChart.update();
         }
 
-        // Hàm tính "Last update N ago"
-        function timeAgo(dateString) {
-            return moment(dateString).fromNow(); // Sử dụng thư viện Moment.js
-        }
-
-        // HÀM CHÍNH: Lấy dữ liệu từ ThingSpeak
         async function fetchData() {
             const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=20&timezone=Asia/Ho_Chi_Minh`;
-            
             try {
-                const response = await fetch(url);
-                const data = await response.json();
+                const res = await fetch(url);
+                const data = await res.json();
+                if(!data.feeds.length) return;
 
-                if (!data.feeds || data.feeds.length === 0) {
-                    console.warn("Chưa có dữ liệu");
-                    return;
-                }
+                const last = data.feeds[data.feeds.length - 1];
 
-                // 1. Cập nhật các thẻ Widget (Lấy giá trị mới nhất - phần tử cuối cùng)
-                const lastEntry = data.feeds[data.feeds.length - 1];
+                // Update Widget Số
+                updateAqiDisplay(Math.round(last[FIELDS.aqi] || 0));
+                document.getElementById('temp-val').innerText = Math.round(last[FIELDS.temp] || 0);
+                document.getElementById('humi-val').innerText = Math.round(last[FIELDS.humi] || 0);
+                document.getElementById('pm-val').innerText = parseFloat(last[FIELDS.pm] || 0).toFixed(1);
+                document.getElementById('co-val').innerText = parseFloat(last[FIELDS.co] || 0).toFixed(1);
+
+                // Update Footer Time
+                moment.locale('vi');
+                const timeAgo = moment(last.created_at).fromNow();
+                document.getElementById('global-update-time').innerText = `Cập nhật dữ liệu lần cuối: ${timeAgo} (${moment(last.created_at).format('HH:mm:ss DD/MM')})`;
+
+                // Update Charts
+                const labels = data.feeds.map(f => moment(f.created_at).format('HH:mm'));
                 
-                // Set giá trị
-                document.getElementById('aqi-val').innerText = Math.round(lastEntry[FIELDS.aqi] || 0);
-                document.getElementById('pm-val').innerText = parseFloat(lastEntry[FIELDS.pm] || 0).toFixed(1);
-                document.getElementById('co-val').innerText = parseFloat(lastEntry[FIELDS.co] || 0).toFixed(1);
-                document.getElementById('temp-val').innerText = Math.round(lastEntry[FIELDS.temp] || 0);
-                document.getElementById('humi-val').innerText = Math.round(lastEntry[FIELDS.humi] || 0);
+                charts.temp.data.labels = labels;
+                charts.temp.data.datasets[0].data = data.feeds.map(f => f[FIELDS.temp]);
+                charts.temp.update();
 
-                // Cập nhật trạng thái AQI
-                updateAqiStatus(Math.round(lastEntry[FIELDS.aqi] || 0));
+                charts.humi.data.labels = labels;
+                charts.humi.data.datasets[0].data = data.feeds.map(f => f[FIELDS.humi]);
+                charts.humi.update();
 
-                // Cập nhật thời gian (Last update)
-                const timeStr = lastEntry.created_at;
-                const timeMsg = "Cập nhật " + timeAgo(timeStr);
-                
-                document.getElementById('temp-time').innerText = timeMsg;
-                document.getElementById('humi-time').innerText = timeMsg;
-                document.getElementById('pm-time').innerText = timeMsg;
-                document.getElementById('co-time').innerText = timeMsg;
+                charts.pm.data.labels = labels;
+                charts.pm.data.datasets[0].data = data.feeds.map(f => f[FIELDS.pm]);
+                charts.pm.update();
 
-                // 2. Cập nhật Biểu đồ (Lấy mảng history)
-                const labels = data.feeds.map(feed => moment(feed.created_at).format('HH:mm'));
-                const tempData = data.feeds.map(feed => feed[FIELDS.temp]);
-                const humiData = data.feeds.map(feed => feed[FIELDS.humi]);
-                const pmData = data.feeds.map(feed => feed[FIELDS.pm]);
-                const coData = data.feeds.map(feed => feed[FIELDS.co]);
+                charts.co.data.labels = labels;
+                charts.co.data.datasets[0].data = data.feeds.map(f => f[FIELDS.co]);
+                charts.co.update();
 
-                mainChart.data.labels = labels;
-                mainChart.data.datasets[0].data = tempData;
-                mainChart.data.datasets[1].data = humiData;
-                mainChart.data.datasets[2].data = pmData;
-                mainChart.data.datasets[3].data = coData;
-                mainChart.update();
-
-                // Ẩn loading
-                document.getElementById('loading').style.display = 'none';
-
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu:", error);
-                document.getElementById('loading').innerText = "Lỗi kết nối ThingSpeak!";
+            } catch(e) {
+                console.error(e);
             }
         }
 
-        // Khởi chạy khi trang load xong
-        window.onload = function() {
-            // Set locale cho momentjs sang Tiếng Việt
-            moment.locale('vi'); 
-
+        window.onload = () => {
             initGauge();
-            initHistoryChart();
+            initCharts();
             fetchData();
-
-            // Tự động cập nhật mỗi 20 giây
-            setInterval(fetchData, 20000);
+            setInterval(fetchData, 20000); // 20s refresh
         };
-
     </script>
 </body>
 </html>
