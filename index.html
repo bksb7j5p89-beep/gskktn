@@ -242,7 +242,6 @@
 
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
 
-    /* ... Giữ nguyên các hàm helper màu sắc/text ... */
     function getColorForAQI(aqi) {
         if (aqi <= 50) return AQI_COLORS[0];
         if (aqi <= 100) return AQI_COLORS[1];
@@ -274,18 +273,15 @@
     function calculateNeedleAngle(aqi) {
         const segment = Math.PI / 6; 
         let angle = 0;
-
         if (aqi <= 50) angle = (aqi / 50) * segment;
         else if (aqi <= 100) angle = segment + ((aqi - 50) / 50) * segment;
         else if (aqi <= 150) angle = segment * 2 + ((aqi - 100) / 50) * segment;
         else if (aqi <= 200) angle = segment * 3 + ((aqi - 150) / 50) * segment;
         else if (aqi <= 300) angle = segment * 4 + ((aqi - 200) / 100) * segment;
         else { let val = Math.min(aqi, 500); angle = segment * 5 + ((val - 300) / 200) * segment; }
-        
         return Math.PI + angle;
     }
 
-    // --- CẬP NHẬT PHẦN VẼ SỐ TẠI ĐÂY ---
     const gaugePlugin = {
         id: 'gaugeLabels',
         afterDraw: (chart) => {
@@ -304,34 +300,43 @@
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(angle);
-            
             ctx.beginPath();
             ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6);
             ctx.fillStyle = '#1e293b'; ctx.fill();
-            
             ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
             ctx.restore();
 
-            // 2. VẼ SỐ (ĐÃ CHỈNH SỬA)
+            // 2. VẼ SỐ (ĐÃ TINH CHỈNH VỊ TRÍ)
             const numbers = [0, 50, 100, 150, 200, 300, 500];
             const segmentAngle = Math.PI / 6;
             
-            // Thay đổi: Dùng outerR + 25 để đẩy số ra ngoài viền
-            const rNum = outerR + 25; 
-            
-            // Thay đổi: Tăng size chữ lên 16px và đậm hơn
-            ctx.font = '700 16px Inter'; 
-            ctx.fillStyle = '#475569'; // Màu xám đậm hơn chút
+            ctx.font = '700 15px Inter'; 
+            ctx.fillStyle = '#64748b';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
+            // Mảng offset thủ công: [x, y] cho từng số để căn chỉnh chính xác vào rãnh
+            const manualOffsets = [
+                { r: 25, y: 0 },  // 0
+                { r: 22, y: 2 },  // 50
+                { r: 15, y: 5 },  // 100 (Hạ thấp bán kính & tăng Y để kéo xuống)
+                { r: 12, y: 8 },  // 150 (Đỉnh: Gần nhất)
+                { r: 15, y: 5 },  // 200 (Kéo xuống tương tự 100)
+                { r: 22, y: 2 },  // 300
+                { r: 25, y: 0 }   // 500
+            ];
+
             numbers.forEach((num, i) => {
-                // Góc hiển thị khớp với rãnh chia màu
                 const numAngle = Math.PI + (i * segmentAngle);
                 
+                // Lấy offset riêng cho từng số
+                const offset = manualOffsets[i];
+                const rNum = outerR + offset.r; 
+
                 const nx = cx + Math.cos(numAngle) * rNum;
-                const ny = cy + Math.sin(numAngle) * rNum;
+                // Cộng thêm offset.y để hạ thấp số xuống theo chiều dọc
+                const ny = cy + Math.sin(numAngle) * rNum + offset.y;
                 
                 ctx.fillText(num, nx, ny);
             });
@@ -359,8 +364,8 @@
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false }, tooltip: { enabled: false } },
                 layout: { 
-                    // Thay đổi: Tăng padding để chứa đủ số khi đẩy ra ngoài
-                    padding: { top: 30, left: 35, right: 35, bottom: 0 } 
+                    // Padding vừa đủ để không cắt mất số 0 và 500
+                    padding: { top: 25, left: 30, right: 30, bottom: 0 } 
                 }
             },
             plugins: [gaugePlugin]
@@ -380,7 +385,6 @@
         setInterval(fetchData, 20000);
     }
 
-    /* ... Giữ nguyên phần setStatus, updateView, fetchData ... */
     function setStatus(ok, msg) {
         document.getElementById('status').innerText = msg;
         document.getElementById('led').className = ok ? 'dot ok' : 'dot err';
