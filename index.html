@@ -355,18 +355,32 @@
     const gaugePlugin = {
         id: 'gaugeLabels',
         afterDraw: (chart) => {
-            const { ctx, width, height } = chart; const meta = chart.getDatasetMeta(0);
-            const cx = width / 2; const cy = height - (height * 0.15); const outerR = meta.data[0].outerRadius;
+            const { ctx, width, height } = chart; 
+            const meta = chart.getDatasetMeta(0);
+            
+            // --- SỬA LỖI TẠI ĐÂY: DÙNG TÂM THỰC TẾ CỦA CHART ---
+            const cx = meta.data[0].x; 
+            const cy = meta.data[0].y;
+            const outerR = meta.data[0].outerRadius;
+            
             let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
             const angle = calculateNeedleAngle(val); const needleLen = outerR - 5; 
-            ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
+            
+            ctx.save(); 
+            ctx.translate(cx, cy); 
+            ctx.rotate(angle);
+            
             ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6);
             ctx.fillStyle = '#1e293b'; ctx.fill();
             ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
-            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore();
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
+            ctx.restore();
+            
             const numbers = [0, 50, 100, 150, 200, 300, 500]; const segmentAngle = Math.PI / 6;
             ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            const manualOffsets = [{ r: 34, y: 35 }, { r: 24, y: 30 }, { r: 15, y: 35 }, { r: 8, y: 40 }, { r: 15, y: 35 }, { r: 24, y: 30 }, { r: 34, y: 35 }];
+            // Điều chỉnh lại Y một chút vì tâm giờ đã chuẩn
+            const manualOffsets = [{ r: 34, y: 0 }, { r: 24, y: 5 }, { r: 15, y: 15 }, { r: 8, y: 20 }, { r: 15, y: 15 }, { r: 24, y: 5 }, { r: 34, y: 0 }];
+            
             numbers.forEach((num, i) => {
                 const numAngle = Math.PI + (i * segmentAngle); const offset = manualOffsets[i];
                 const rNum = outerR + offset.r; 
@@ -429,7 +443,7 @@
         const labels = [];
         const data = [];
         for(let i=6; i>=0; i--) {
-            labels.push(moment().subtract(i, 'days').format('dddd')); // Thứ bằng tiếng Việt
+            labels.push(moment().subtract(i, 'days').format('dddd')); 
             let randomVar = current * (0.9 + Math.random() * 0.2);
             data.push(randomVar);
         }
