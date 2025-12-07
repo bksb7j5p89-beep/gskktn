@@ -134,22 +134,33 @@
         .time-display { font-size: 3.2rem; font-weight: 900; color: #1e293b; line-height: 1; letter-spacing: -2px; }
         .date-day { font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
         .date-full { font-size: 1.4rem; font-weight: 800; color: #334155; letter-spacing: -0.5px; }
+        
         .hub-buttons { flex: 65; display: flex; gap: 20px; padding: 20px; background: #f8fafc; }
+        
         .ctrl-btn {
             flex: 1; background: #ffffff; border-radius: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s ease;
+            cursor: pointer; transition: all 0.2s ease; user-select: none;
         }
         .ctrl-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         .ctrl-btn:active { transform: scale(0.98); }
+        
         .btn-icon-circle { width: 55px; height: 55px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; transition: 0.3s; }
         .btn-label { font-size: 1.1rem; font-weight: 800; color: #475569; }
         .btn-status { font-size: 0.9rem; font-weight: 700; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }
+        
+        /* Trạng thái BẬT (Active) */
         .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
         .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
         .ctrl-btn.active .btn-label { color: #065f46; }
         .ctrl-btn.active .btn-status { color: var(--primary-green); }
+
+        /* Trạng thái Cưỡng chế TẮT (Manual OFF) */
+        .ctrl-btn.off-mode { border-color: #ef4444; background: #fff5f5; }
+        .ctrl-btn.off-mode .btn-icon-circle { background: #fee2e2; color: #ef4444; }
+        .ctrl-btn.off-mode .btn-label { color: #991b1b; }
+        .ctrl-btn.off-mode .btn-status { color: #ef4444; }
 
         /* 3. INSIGHT CARD */
         .insight-card {
@@ -263,8 +274,16 @@
                     <div class="hub-cell"><div class="date-day" id="clock-day">--</div><div class="date-full" id="clock-date">--/--/----</div></div>
                 </div>
                 <div class="hub-buttons">
-                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')"><div class="btn-icon-circle">❄️</div><div class="btn-label">Điều Hoà</div><div class="btn-status">TẮT</div></div>
-                    <div class="ctrl-btn active" id="btn-fresh" onclick="toggleBtn('btn-fresh')"><div class="btn-icon-circle">🍃</div><div class="btn-label">Khí Tươi</div><div class="btn-status">BẬT</div></div>
+                    <div class="ctrl-btn" id="btn-ac" onclick="toggleBtn('btn-ac')">
+                        <div class="btn-icon-circle">❄️</div>
+                        <div class="btn-label">Điều Hoà</div>
+                        <div class="btn-status">TẮT</div>
+                    </div>
+                    <div class="ctrl-btn" id="btn-fresh" onclick="toggleBtn('btn-fresh')">
+                        <div class="btn-icon-circle">🍃</div>
+                        <div class="btn-label">Khí Tươi</div>
+                        <div class="btn-status">TẮT</div>
+                    </div>
                 </div>
             </div>
 
@@ -313,18 +332,22 @@
 <script>
     const CONFIG = {
         ID: '3195067',
-        KEY: '5NY52VK6EWBE41LC',
+        READ_KEY: '5NY52VK6EWBE41LC',  // Key Đọc
+        WRITE_KEY: 'H0ARO2KSFH415ZDX', // Key Ghi (Gửi lệnh)
         MAP: { aqi: 'field1', pm: 'field2', co: 'field3', temp: 'field4', humi: 'field5' }
     };
 
     let charts = {};
     let gauge;
     let detailChart = null; 
-    let globalFeeds = [];   
+    let globalFeeds = [];
+    
+    // Biến lưu trạng thái điều khiển trên Web (0: Auto, 1: On, 2: Off)
+    let ctrlState = { ac: 0, fan: 0 }; 
 
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
 
-    /* --- HELPERS VIỆT HÓA --- */
+    /* --- HELPERS --- */
     function getColorForAQI(aqi) {
         if (aqi <= 50) return AQI_COLORS[0]; if (aqi <= 100) return AQI_COLORS[1]; if (aqi <= 150) return AQI_COLORS[2];
         if (aqi <= 200) return AQI_COLORS[3]; if (aqi <= 300) return AQI_COLORS[4]; return AQI_COLORS[5];
@@ -344,7 +367,7 @@
         return Math.PI + angle;
     }
 
-    /* --- CHART CONFIGS --- */
+    /* --- CHARTS --- */
     const commonOptions = {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
@@ -357,30 +380,20 @@
         afterDraw: (chart) => {
             const { ctx, width, height } = chart; 
             const meta = chart.getDatasetMeta(0);
-            
-            // --- SỬA LỖI TẠI ĐÂY: DÙNG TÂM THỰC TẾ CỦA CHART ---
             const cx = meta.data[0].x; 
             const cy = meta.data[0].y;
             const outerR = meta.data[0].outerRadius;
-            
             let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
             const angle = calculateNeedleAngle(val); const needleLen = outerR - 5; 
-            
-            ctx.save(); 
-            ctx.translate(cx, cy); 
-            ctx.rotate(angle);
-            
+            ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
             ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(needleLen, 0); ctx.lineTo(0, 6);
             ctx.fillStyle = '#1e293b'; ctx.fill();
             ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
             ctx.restore();
-            
             const numbers = [0, 50, 100, 150, 200, 300, 500]; const segmentAngle = Math.PI / 6;
             ctx.font = '700 15px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            // Điều chỉnh lại Y một chút vì tâm giờ đã chuẩn
             const manualOffsets = [{ r: 34, y: 0 }, { r: 24, y: 5 }, { r: 15, y: 15 }, { r: 8, y: 20 }, { r: 15, y: 15 }, { r: 24, y: 5 }, { r: 34, y: 0 }];
-            
             numbers.forEach((num, i) => {
                 const numAngle = Math.PI + (i * segmentAngle); const offset = manualOffsets[i];
                 const rNum = outerR + offset.r; 
@@ -390,7 +403,6 @@
         }
     };
 
-    /* --- INIT & LOGIC --- */
     function init() {
         const ctxG = document.getElementById('gaugeCanvas').getContext('2d');
         gauge = new Chart(ctxG, {
@@ -412,7 +424,7 @@
         setInterval(updateClock, 1000); updateClock();
     }
 
-    /* --- MODAL LOGIC VIỆT HÓA --- */
+    /* --- MODAL LOGIC --- */
     const detailConfig = {
         'temp': { title: 'Nhiệt độ', unit: '°C', field: 'temp', color: '#f59e0b' },
         'humi': { title: 'Độ ẩm', unit: '%', field: 'humi', color: '#3b82f6' },
@@ -422,7 +434,6 @@
 
     function openDetail(type) {
         if (!globalFeeds.length) return;
-        
         const conf = detailConfig[type];
         const modal = document.getElementById('detailModal');
         const fieldKey = CONFIG.MAP[conf.field]; 
@@ -439,7 +450,6 @@
         document.getElementById('m-min').innerText = conf.field === 'pm' || conf.field === 'co' ? min.toFixed(1) : Math.round(min);
         document.getElementById('m-max').innerText = conf.field === 'pm' || conf.field === 'co' ? max.toFixed(1) : Math.round(max);
 
-        // Biểu đồ tuần
         const labels = [];
         const data = [];
         for(let i=6; i>=0; i--) {
@@ -465,47 +475,88 @@
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { borderDash: [4, 4] } },
-                    x: { grid: { display: false } }
-                }
+                scales: { y: { grid: { borderDash: [4, 4] } }, x: { grid: { display: false } } }
             }
         });
-
         modal.classList.add('open');
     }
 
-    function closeDetail() {
-        document.getElementById('detailModal').classList.remove('open');
-    }
+    function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
 
-    /* --- EXISTING LOGIC --- */
+    /* --- SYSTEM LOGIC --- */
     function updateClock() {
         const now = moment(); now.locale('vi'); 
         document.getElementById('clock-time').innerText = now.format('HH:mm');
         document.getElementById('clock-day').innerText = now.format('dddd');
         document.getElementById('clock-date').innerText = now.format('DD/MM/YYYY');
     }
-    function toggleBtn(id) {
-        const btn = document.getElementById(id); const statusEl = btn.querySelector('.btn-status');
-        btn.classList.toggle('active');
-        statusEl.innerText = btn.classList.contains('active') ? "BẬT" : "TẮT";
-    }
+
     function updateInsight(temp, humi, aqi) {
         const iconEl = document.getElementById('insight-icon');
         const statusEl = document.getElementById('insight-status');
         const msgEl = document.getElementById('insight-msg');
-        // Logic Việt hóa
         if (aqi > 150) { iconEl.innerText = "😷"; statusEl.innerText = "Ô nhiễm"; msgEl.innerText = "Không khí xấu. Bật máy lọc ngay."; } 
         else if (temp > 30) { iconEl.innerText = "🥵"; statusEl.innerText = "Quá nóng"; msgEl.innerText = "Nhiệt độ cao. Cân nhắc bật điều hòa."; } 
         else if (humi > 80) { iconEl.innerText = "💧"; statusEl.innerText = "Ẩm ướt"; msgEl.innerText = "Độ ẩm cao. Bật chế độ hút ẩm."; } 
         else if (temp < 18) { iconEl.innerText = "🥶"; statusEl.innerText = "Lạnh"; msgEl.innerText = "Trời lạnh. Đóng cửa sổ để giữ ấm."; } 
         else { iconEl.innerText = "😊"; statusEl.innerText = "Thoải mái"; msgEl.innerText = "Điều kiện tuyệt vời! Tận hưởng không gian sống."; }
     }
+
+    /* --- [MỚI] TÍNH NĂNG GỬI LỆNH ĐIỀU KHIỂN --- */
+    async function toggleBtn(id) {
+        const btn = document.getElementById(id);
+        const statusEl = btn.querySelector('.btn-status');
+        const isAC = id === 'btn-ac';
+        let currentVal = isAC ? ctrlState.ac : ctrlState.fan;
+        
+        // Logic điều khiển: 
+        // 0 (Auto) hoặc 2 (Off) -> Bấm thì thành 1 (Manual ON)
+        // 1 (On) -> Bấm thì thành 2 (Manual OFF)
+        let newVal = (currentVal === 0 || currentVal === 2) ? 1 : 2;
+
+        if (isAC) ctrlState.ac = newVal; 
+        else ctrlState.fan = newVal;
+        
+        // Cập nhật giao diện ngay lập tức (phản hồi giả)
+        updateBtnUI(id, newVal);
+        statusEl.innerText = "Đang gửi...";
+
+        const field = isAC ? 'field6' : 'field7';
+        try {
+            // Gửi lệnh lên ThingSpeak
+            const url = `https://api.thingspeak.com/update?api_key=${CONFIG.WRITE_KEY}&${field}=${newVal}`;
+            // fetch 'no-cors' để tránh lỗi CORS khi chạy local, thực tế lệnh vẫn đi
+            await fetch(url, {mode: 'no-cors'});
+            
+            // Cập nhật text sau khi gửi
+            statusEl.innerText = newVal === 1 ? "BẬT (M)" : "TẮT (M)";
+        } catch(e) {
+            console.error(e);
+            statusEl.innerText = "Lỗi";
+        }
+    }
+
+    function updateBtnUI(id, val) {
+        const btn = document.getElementById(id);
+        const statusEl = btn.querySelector('.btn-status');
+        
+        // Reset class
+        btn.className = 'ctrl-btn'; 
+        
+        if (val === 1) { // ON
+            btn.classList.add('active'); 
+        } else if (val === 2) { // OFF
+            btn.classList.add('off-mode');
+        } else { // AUTO (0)
+            // Mặc định màu trắng
+        }
+    }
+
     function setStatus(ok, msg) {
         document.getElementById('status').innerText = msg;
         document.getElementById('led').className = ok ? 'dot ok' : 'dot err';
     }
+
     function updateView(last, feeds) {
         const aqi = Math.round(last[CONFIG.MAP.aqi] || 0);
         const temp = Math.round(last[CONFIG.MAP.temp] || 0);
@@ -515,13 +566,9 @@
         const color = getColorForAQI(aqi);
         
         document.getElementById('aqi-val').innerText = aqi; 
-        const txtEl = document.getElementById('aqi-text');
-        txtEl.innerText = getTextForAQI(aqi); txtEl.style.color = color;
-
-        document.getElementById('v-temp').innerText = temp;
-        document.getElementById('v-humi').innerText = humi;
-        document.getElementById('v-pm').innerText = pm;
-        document.getElementById('v-co').innerText = co;
+        const txtEl = document.getElementById('aqi-text'); txtEl.innerText = getTextForAQI(aqi); txtEl.style.color = color;
+        document.getElementById('v-temp').innerText = temp; document.getElementById('v-humi').innerText = humi; 
+        document.getElementById('v-pm').innerText = pm; document.getElementById('v-co').innerText = co;
 
         gauge.update();
         updateInsight(temp, humi, aqi);
@@ -534,14 +581,35 @@
         };
         upd('temp', CONFIG.MAP.temp); upd('humi', CONFIG.MAP.humi);
         upd('pm', CONFIG.MAP.pm); upd('co', CONFIG.MAP.co);
+
+        /* --- [MỚI] ĐỌC PHẢN HỒI TỪ ESP32 (FIELD 8) --- */
+        // ESP gửi lên Field 8 theo mã: (AC_State * 10) + Fan_State
+        // Ví dụ: 11 (AC On, Fan On), 10 (AC On, Fan Off), 01 (AC Off, Fan On)
+        const statusVal = parseInt(last['field8'] || 0);
+        const isACOn = Math.floor(statusVal / 10) === 1;
+        const isFanOn = (statusVal % 10) === 1;
+
+        // Nếu người dùng đang để chế độ AUTO (0) trên Web, 
+        // thì cập nhật giao diện theo trạng thái thực tế từ ESP
+        if (ctrlState.ac === 0) {
+            // Nếu ESP báo đang chạy -> Hiển thị Xanh, ngược lại Trắng
+            updateBtnUI('btn-ac', isACOn ? 1 : 0);
+            document.querySelector('#btn-ac .btn-status').innerText = isACOn ? "AUTO (BẬT)" : "AUTO (TẮT)";
+        }
+        
+        if (ctrlState.fan === 0) {
+            updateBtnUI('btn-fresh', isFanOn ? 1 : 0);
+            document.querySelector('#btn-fresh .btn-status').innerText = isFanOn ? "AUTO (BẬT)" : "AUTO (TẮT)";
+        }
     }
+
     async function fetchData() {
         try {
-            const res = await fetch(`https://api.thingspeak.com/channels/${CONFIG.ID}/feeds.json?api_key=${CONFIG.KEY}&results=20&timezone=Asia/Ho_Chi_Minh`);
+            const res = await fetch(`https://api.thingspeak.com/channels/${CONFIG.ID}/feeds.json?api_key=${CONFIG.READ_KEY}&results=20&timezone=Asia/Ho_Chi_Minh`);
             if(!res.ok) throw new Error();
             const data = await res.json();
             if(!data.feeds.length) { setStatus(true, "Đang chờ dữ liệu..."); return; }
-            globalFeeds = data.feeds; // Lưu lại để modal dùng
+            globalFeeds = data.feeds;
             const last = data.feeds[data.feeds.length-1];
             updateView(last, data.feeds);
             setStatus(true, `Cập nhật: ${moment(last.created_at).format('HH:mm:ss DD/MM')}`);
