@@ -17,9 +17,7 @@
             --text-sub: #64748b;
             --radius: 24px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.025);
-            /* Chiều cao tổng của hàng trên cùng */
             --row-height: 460px; 
-            /* Chiều rộng trang cố định */
             --fixed-width: 1500px;
         }
 
@@ -50,7 +48,6 @@
         /* GRID LAYOUT */
         .main-grid {
             display: grid;
-            /* Cột phải rộng đúng bằng --row-height để đảm bảo 4 ô con là hình vuông */
             grid-template-columns: 1fr var(--row-height); 
             gap: 24px; align-items: start;
         }
@@ -71,36 +68,50 @@
             position: absolute; top: 25px; left: 30px; z-index: 5;
         }
 
-        /* Container chứa Canvas (chiếm phần trên) */
+        /* VÙNG 1: GAUGE */
         .gauge-section {
-            flex: 2; /* Chiếm 2/3 chiều cao */
+            flex: 3; /* Chiếm phần lớn chiều cao */
             position: relative;
             display: flex; justify-content: center; align-items: flex-end;
             padding-bottom: 10px;
         }
         #gaugeCanvas { width: 100%; height: 100%; }
 
-        /* Container chứa Số & Trạng thái (chiếm phần dưới) */
+        /* VÙNG 2 & 3: THÔNG TIN (Chứa 2 cột) */
         .info-section {
-            flex: 1; /* Chiếm 1/3 chiều cao */
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start;
-            padding-bottom: 20px;
+            flex: 2; /* Chiếm phần còn lại */
+            display: flex; 
+            flex-direction: row; /* Xếp ngang */
+            align-items: center; justify-content: center;
+            padding-bottom: 30px;
         }
 
+        /* VÙNG 2: GIÁ TRỊ (Bên trái) */
+        .aqi-value-box {
+            flex: 1; /* Chiếm 1/2 chiều rộng */
+            text-align: right; /* Căn phải sát vạch */
+            padding-right: 20px;
+            border-right: 2px solid #e2e8f0; /* Đường kẻ dọc */
+        }
         .aqi-number {
-            font-size: 6.5rem; font-weight: 900; line-height: 1; 
-            color: #1e293b; /* JS sẽ đổi màu này */
-            letter-spacing: -3px;
-            transition: color 0.3s ease;
+            font-size: 7rem; font-weight: 900; line-height: 1; 
+            color: #1e293b; /* LUÔN MÀU ĐEN */
+            letter-spacing: -4px;
+        }
+
+        /* VÙNG 3: TRẠNG THÁI (Bên phải) */
+        .aqi-status-box {
+            flex: 1; /* Chiếm 1/2 chiều rộng */
+            text-align: left; /* Căn trái sát vạch */
+            padding-left: 20px;
         }
         .aqi-status-text {
-            font-size: 1.8rem; font-weight: 800; text-transform: uppercase;
-            margin-top: 5px;
-            transition: color 0.3s ease;
+            font-size: 2.2rem; font-weight: 800; text-transform: uppercase;
+            margin-top: 0; line-height: 1;
+            transition: color 0.3s ease; /* Hiệu ứng đổi màu */
         }
 
-        /* 2. CHARTS GRID (2x2) */
+        /* 2. CHARTS GRID */
         .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .chart-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
@@ -109,22 +120,19 @@
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* RIGHT COLUMN (4 WIDGETS) */
+        /* RIGHT COLUMN */
         .right-col-grid {
             height: var(--row-height); 
             display: grid;
             grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
             gap: 20px;
         }
-
         .widget {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 15px; border: 1px solid #f1f5f9;
-            /* Đảm bảo hình vuông */
             aspect-ratio: 1/1; 
         }
-
         .w-icon { font-size: 2.5rem; margin-bottom: 10px; }
         .w-label { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
         .w-val { font-size: 2.8rem; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: #334155; }
@@ -154,8 +162,12 @@
                 </div>
                 
                 <div class="info-section">
-                    <div id="aqi-val" class="aqi-number">--</div>
-                    <div id="aqi-text" class="aqi-status-text">--</div>
+                    <div class="aqi-value-box">
+                        <div id="aqi-val" class="aqi-number">--</div>
+                    </div>
+                    <div class="aqi-status-box">
+                        <div id="aqi-text" class="aqi-status-text">--</div>
+                    </div>
                 </div>
             </div>
 
@@ -218,15 +230,7 @@
     let charts = {};
     let gauge;
 
-    // --- MÀU SẮC CHUẨN AQI ---
-    const AQI_COLORS = [
-        '#4ade80', // Good (0-50)
-        '#facc15', // Moderate (51-100)
-        '#fb923c', // Sensitive (101-150)
-        '#ef4444', // Unhealthy (151-200)
-        '#a855f7', // V.Unhealthy (201-300)
-        '#881337'  // Hazardous (300+)
-    ];
+    const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
 
     function getColorForAQI(aqi) {
         if (aqi <= 50) return AQI_COLORS[0];
@@ -246,7 +250,6 @@
         return "Hazardous";
     }
 
-    // --- CHART OPTIONS ---
     const commonOptions = {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
@@ -257,9 +260,8 @@
         elements: { point: { radius: 0, hitRadius: 10 }, line: { borderWidth: 2.5, tension: 0.4 } }
     };
 
-    // --- LOGIC GAUGE ---
     function calculateNeedleAngle(aqi) {
-        const segment = Math.PI / 6; // 6 zones
+        const segment = Math.PI / 6; 
         let angle = 0;
         if (aqi <= 50) angle = (aqi / 50) * segment;
         else if (aqi <= 100) angle = segment + ((aqi - 50) / 50) * segment;
@@ -275,15 +277,10 @@
         afterDraw: (chart) => {
             const { ctx, width, height } = chart;
             const meta = chart.getDatasetMeta(0);
-            
-            // Tâm vòng tròn đẩy lên cao để nhường chỗ cho text bên dưới
-            // height ở đây là height của canvas-container, không phải toàn bộ card
             const cx = width / 2;
             const cy = height - 15; 
-            const outerR = meta.data[0].outerRadius;
             const innerR = meta.data[0].innerRadius;
 
-            // 1. VẼ KIM (Ngắn, không đè số)
             let val = parseInt(document.getElementById('aqi-val').innerText) || 0;
             const angle = calculateNeedleAngle(val);
             const needleLen = innerR - 20; 
@@ -297,22 +294,6 @@
             ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2); ctx.fillStyle = '#1e293b'; ctx.fill(); 
             ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); 
             ctx.restore();
-
-            // 2. VẼ SỐ MỐC (0, 50, 100... 500)
-            const numbers = [0, 50, 100, 150, 200, 300, 500];
-            const segmentAngle = Math.PI / 6;
-            const rNum = outerR + 25;
-            ctx.font = 'bold 16px Inter';
-            ctx.fillStyle = '#94a3b8';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            numbers.forEach((num, i) => {
-                const numAngle = Math.PI + (i * segmentAngle);
-                const nx = cx + Math.cos(numAngle) * rNum;
-                const ny = cy + Math.sin(numAngle) * rNum;
-                ctx.fillText(num, nx, ny);
-            });
         }
     };
 
@@ -323,7 +304,7 @@
             data: {
                 labels: [],
                 datasets: [{
-                    data: [1, 1, 1, 1, 1, 1], // 6 vùng đều nhau
+                    data: [1, 1, 1, 1, 1, 1], 
                     backgroundColor: AQI_COLORS,
                     borderColor: '#ffffff', borderWidth: 4,
                     cutout: '70%', circumference: 180, rotation: -90
@@ -360,17 +341,16 @@
         const aqi = Math.round(last[CONFIG.MAP.aqi] || 0);
         const color = getColorForAQI(aqi);
         
-        // Update AQI Number & Text
         const aqiNumEl = document.getElementById('aqi-val');
         const aqiTxtEl = document.getElementById('aqi-text');
         
+        // Cập nhật số AQI (Luôn màu đen - Không set color ở đây)
         aqiNumEl.innerText = aqi;
-        aqiNumEl.style.color = color; // Đổi màu số
         
+        // Cập nhật chữ trạng thái (Đổi màu theo AQI)
         aqiTxtEl.innerText = getTextForAQI(aqi);
-        aqiTxtEl.style.color = color; // Đổi màu chữ trạng thái
+        aqiTxtEl.style.color = color;
 
-        // Update Widgets
         document.getElementById('v-temp').innerText = Math.round(last[CONFIG.MAP.temp] || 0);
         document.getElementById('v-humi').innerText = Math.round(last[CONFIG.MAP.humi] || 0);
         document.getElementById('v-pm').innerText = parseFloat(last[CONFIG.MAP.pm] || 0).toFixed(1);
@@ -378,7 +358,6 @@
 
         gauge.update();
 
-        // Update Charts
         const labels = feeds.map(f => moment(f.created_at).format('HH:mm'));
         const upd = (k, f) => {
             charts[k].data.labels = labels;
