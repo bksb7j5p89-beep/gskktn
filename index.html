@@ -16,9 +16,8 @@
             --bg-card: #ffffff;
             --text-primary: #1f2937;
             --text-secondary: #6b7280;
-            --radius: 16px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            
+            --radius: 12px;
+            --shadow: 0 2px 4px rgba(0,0,0,0.05);
             --success-color: #10b981;
             --error-color: #ef4444;
         }
@@ -32,99 +31,94 @@
             box-sizing: border-box;
         }
 
-        /* --- HEADER & STATUS --- */
+        /* --- HEADER --- */
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             max-width: 1200px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 15px auto;
         }
 
-        h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        h1 { margin: 0; font-size: 22px; font-weight: 700; }
 
         .status-badge {
             display: flex;
             align-items: center;
             gap: 8px;
             background: #fff;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 20px;
             box-shadow: var(--shadow);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
         }
 
-        .led {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-        }
+        .led { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .led-green { background-color: var(--success-color); box-shadow: 0 0 5px var(--success-color); animation: pulse 2s infinite; }
+        .led-red { background-color: var(--error-color); box-shadow: 0 0 5px var(--error-color); }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        .led-green {
-            background-color: var(--success-color);
-            box-shadow: 0 0 8px var(--success-color);
-            animation: pulse-green 2s infinite;
-        }
-
-        .led-red {
-            background-color: var(--error-color);
-            box-shadow: 0 0 8px var(--error-color);
-            animation: pulse-red 1s infinite;
-        }
-
-        @keyframes pulse-green { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* --- MAIN LAYOUT --- */
+        /* --- LAYOUT CHÍNH (GRID) --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr; /* Cột trái lớn gấp đôi cột phải */
-            gap: 20px;
+            /* Cột trái 2 phần, cột phải 1 phần */
+            grid-template-columns: 2fr 1fr; 
+            gap: 15px;
             max-width: 1200px;
             margin: 0 auto;
+            align-items: start; /* Ngăn cột phải bị kéo giãn chiều cao theo cột trái */
         }
 
-        /* CỘT TRÁI (Left Column) */
+        /* --- CỘT TRÁI --- */
         .left-column {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
+            min-width: 0; /* Quan trọng để chart không bị tràn grid */
         }
 
-        /* 1. AQI Card */
+        /* 1. AQI Card - Đã chỉnh lại tỷ lệ */
         .aqi-card {
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 20px;
-            aspect-ratio: 16/9; /* Giữ tỷ lệ đẹp cho gauge */
+            padding: 10px 20px;
+            /* Tỷ lệ 2.5:1 giúp nó bè ngang, không bị cao vống lên */
+            aspect-ratio: 2.5 / 1; 
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow: hidden;
         }
 
         .chart-wrapper-gauge {
             position: relative;
             width: 100%;
-            height: 85%;
+            height: 100%; /* Chiếm hết chiều cao card */
             display: flex;
             justify-content: center;
-            align-items: flex-end;
+            align-items: flex-end; /* Đẩy biểu đồ xuống đáy */
+            padding-bottom: 10px;
         }
 
-        .aqi-info { text-align: center; margin-top: -40px; z-index: 10; }
-        .aqi-number { font-size: 3.5rem; font-weight: 800; line-height: 1; }
-        .aqi-status { font-size: 1.2rem; font-weight: 600; text-transform: uppercase; margin-top: 5px; display: block; }
-        .card-title { font-size: 1.1rem; font-weight: 600; color: var(--text-secondary); position: absolute; top: 20px; left: 20px; }
+        .aqi-info { 
+            position: absolute; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            text-align: center; 
+            z-index: 10; 
+        }
+        .aqi-number { font-size: 3rem; font-weight: 800; line-height: 1; color: #333; }
+        .aqi-status { font-size: 1rem; font-weight: 600; text-transform: uppercase; display: block; }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--text-secondary); position: absolute; top: 15px; left: 20px; }
 
-        /* 2. Charts Grid (Nằm dưới AQI) */
-        .charts-grid {
+        /* 2. Grid 4 Đồ thị nhỏ (Bên dưới AQI) */
+        .charts-grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr; /* 2 cột */
-            grid-template-rows: 1fr 1fr;    /* 2 hàng */
             gap: 15px;
         }
 
@@ -132,19 +126,21 @@
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 15px;
-            height: 160px; /* Chiều cao cố định hình chữ nhật nhỏ */
+            padding: 10px 15px;
+            /* Tỷ lệ 2:1 tạo hình chữ nhật nằm ngang gọn gàng */
+            aspect-ratio: 2 / 1; 
             display: flex;
             flex-direction: column;
+            min-height: 150px; /* Đảm bảo không bị quá bé trên màn hình nhỏ */
         }
 
         .chart-mini-header {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             margin-bottom: 5px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             color: var(--text-secondary);
         }
 
@@ -152,14 +148,14 @@
             flex-grow: 1;
             position: relative;
             width: 100%;
+            height: 100%;
         }
 
-        /* CỘT PHẢI (Right Column) */
+        /* --- CỘT PHẢI (VALUES) --- */
         .right-column {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 cột widget */
+            grid-template-columns: 1fr 1fr; /* Chia làm 2 cột nhỏ bên trong cột phải */
             gap: 15px;
-            align-content: start;
         }
 
         .widget-card {
@@ -170,26 +166,35 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1/1; /* QUAN TRỌNG: Ép thành hình vuông */
+            /* QUAN TRỌNG: Ép thành hình vuông */
+            aspect-ratio: 1 / 1; 
             text-align: center;
+            padding: 10px;
+            width: 100%; /* Chiếm hết ô grid */
         }
 
-        .widget-icon { font-size: 1.5rem; margin-bottom: 5px; }
-        .widget-label { font-size: 0.9rem; color: var(--text-secondary); }
-        .widget-value { font-size: 1.8rem; font-weight: 700; margin: 5px 0; }
-        .widget-unit { font-size: 0.9rem; font-weight: 500; color: #888; }
+        .widget-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .widget-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .widget-value { font-size: 1.6rem; font-weight: 700; margin: 2px 0; }
+        .widget-unit { font-size: 0.8rem; font-weight: 500; color: #999; }
 
-        /* Colors */
         .color-temp { color: #f59e0b; }
         .color-humi { color: #3b82f6; }
         .color-pm { color: #10b981; }
         .color-co { color: #ef4444; }
 
-        /* RESPONSIVE */
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 900px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .charts-grid { height: auto; }
-            .right-column { grid-template-columns: 1fr 1fr; } 
+            .dashboard-grid { 
+                grid-template-columns: 1fr; /* Chuyển thành 1 cột dọc */
+            }
+            .aqi-card {
+                aspect-ratio: auto; /* Trên mobile cho phép cao tự nhiên */
+                height: 250px;
+            }
+            .charts-grid-container {
+                grid-template-columns: 1fr; /* Đồ thị xếp chồng dọc trên mobile */
+            }
         }
     </style>
 </head>
@@ -197,9 +202,9 @@
 
     <div class="header-container">
         <h1>Phòng Khách</h1>
-        <div class="status-badge" id="status-box">
+        <div class="status-badge">
             <span class="led led-green" id="status-led"></span>
-            <span id="status-text">Đang tải dữ liệu...</span>
+            <span id="status-text">Đang tải...</span>
         </div>
     </div>
 
@@ -217,7 +222,7 @@
                 </div>
             </div>
 
-            <div class="charts-grid">
+            <div class="charts-grid-container">
                 <div class="chart-mini-card">
                     <div class="chart-mini-header"><span style="color:#f59e0b">●</span> Nhiệt độ</div>
                     <div class="chart-container-inner"><canvas id="chartTemp"></canvas></div>
@@ -289,9 +294,11 @@
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    rotation: -90, circumference: 180, cutout: '85%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                    responsive: true, 
+                    maintainAspectRatio: false, // Để CSS quyết định kích thước
+                    rotation: -90, circumference: 180, cutout: '80%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    layout: { padding: 10 }
                 },
                 plugins: [{
                     id: 'needle',
@@ -299,13 +306,20 @@
                         const { ctx, width, height } = chart;
                         let aqiVal = parseInt(document.getElementById('aqi-val').innerText) || 0;
                         if(aqiVal < 0) aqiVal = 0; if(aqiVal > 500) aqiVal = 500;
+                        
                         const angle = Math.PI + (aqiVal / 500) * Math.PI;
+                        
+                        // Tính toán tâm dựa trên kích thước canvas thực tế
                         const cx = width / 2;
-                        const cy = height - (height * 0.15); 
+                        const cy = height - 20; // Dịch lên một chút từ đáy
+
                         ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
-                        ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(height / 1.8, 0); ctx.lineTo(0, 5);
+                        ctx.beginPath(); 
+                        ctx.moveTo(0, -4); 
+                        ctx.lineTo(height / 1.5, 0); // Độ dài kim
+                        ctx.lineTo(0, 4);
                         ctx.fillStyle = '#374151'; ctx.fill();
-                        ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fillStyle = '#374151'; ctx.fill();
+                        ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fillStyle = '#374151'; ctx.fill();
                         ctx.restore();
                     }
                 }]
@@ -335,11 +349,11 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { display: false }, // Ẩn trục X cho gọn
+                        x: { display: false }, 
                         y: { 
                             display: true,
-                            ticks: { count: 3, font: {size: 9} }, // Giảm số lượng vạch chia
-                            grid: { display: false } // Ẩn lưới ngang cho sạch
+                            ticks: { maxTicksLimit: 4, font: {size: 9} }, 
+                            grid: { color: '#f0f0f0' } 
                         }
                     },
                     interaction: { mode: 'index', intersect: false }
@@ -354,7 +368,7 @@
             charts.co   = createMiniChart('chartCO',   '#ef4444');
         }
 
-        // 3. FETCH DATA & HANDLE STATUS
+        // 3. XỬ LÝ DỮ LIỆU & STATUS
         function updateStatus(isSuccess, message) {
             const led = document.getElementById('status-led');
             const text = document.getElementById('status-text');
@@ -362,7 +376,7 @@
             if (isSuccess) {
                 led.className = 'led led-green';
                 text.innerText = message;
-                text.style.color = 'var(--text-primary)';
+                text.style.color = '#333';
             } else {
                 led.className = 'led led-red';
                 text.innerText = "Mất kết nối!";
@@ -393,29 +407,29 @@
             
             try {
                 const res = await fetch(url);
-                if (!res.ok) throw new Error('Network response was not ok');
+                if (!res.ok) throw new Error('Network error');
                 const data = await res.json();
                 
                 if(!data.feeds || data.feeds.length === 0) {
-                    updateStatus(true, "Đã kết nối (Chưa có dữ liệu)");
+                    updateStatus(true, "Chờ dữ liệu...");
                     return;
                 }
 
                 const last = data.feeds[data.feeds.length - 1];
 
-                // Cập nhật số liệu
+                // Update Values
                 updateAqiDisplay(Math.round(last[FIELDS.aqi] || 0));
                 document.getElementById('temp-val').innerText = Math.round(last[FIELDS.temp] || 0);
                 document.getElementById('humi-val').innerText = Math.round(last[FIELDS.humi] || 0);
                 document.getElementById('pm-val').innerText = parseFloat(last[FIELDS.pm] || 0).toFixed(1);
                 document.getElementById('co-val').innerText = parseFloat(last[FIELDS.co] || 0).toFixed(1);
 
-                // Cập nhật trạng thái thành công
+                // Update Status
                 moment.locale('vi');
                 const timeStr = moment(last.created_at).format('HH:mm:ss DD/MM');
                 updateStatus(true, `Cập nhật: ${timeStr}`);
 
-                // Cập nhật biểu đồ
+                // Update Charts
                 const labels = data.feeds.map(f => moment(f.created_at).format('HH:mm'));
                 
                 charts.temp.data.labels = labels;
@@ -436,8 +450,7 @@
 
             } catch(e) {
                 console.error(e);
-                // Báo lỗi mất kết nối
-                updateStatus(false, "");
+                updateStatus(false, "Lỗi");
             }
         }
 
