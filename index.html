@@ -46,14 +46,14 @@
         .dot.err { background: #ef4444; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* GRID LAYOUT CHÍNH */
+        /* MAIN GRID */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr var(--row-height); 
-            gap: 24px; align-items: start;
+            gap: 30px; align-items: start;
         }
 
-        .left-col { display: flex; flex-direction: column; gap: 24px; }
+        .left-col { display: flex; flex-direction: column; gap: 30px; }
 
         /* --- 1. AQI CARD --- */
         .aqi-card {
@@ -86,7 +86,7 @@
         .aqi-status-label { font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
 
         /* --- 2. CHARTS GRID --- */
-        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         .chart-card {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             padding: 24px; height: 300px; display: flex; flex-direction: column; border: 1px solid #f1f5f9;
@@ -94,25 +94,27 @@
         .chart-header { font-size: 1rem; font-weight: 700; color: var(--text-sub); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         .chart-body { flex-grow: 1; position: relative; width: 100%; }
 
-        /* --- 3. RIGHT COLUMN (ĐÃ CHIA BỐ CỤC 50/50) --- */
+        /* --- 3. RIGHT COLUMN (CHỈNH SỬA) --- */
         .right-col-grid {
-            /* Chiều cao khớp với Row Height */
-            height: var(--row-height);
-            display: flex; flex-direction: column; gap: 20px;
+            display: flex; 
+            flex-direction: column; 
+            /* TĂNG KHOẢNG CÁCH TẠI ĐÂY (GAP) */
+            gap: 50px; 
+            height: 100%;
         }
 
-        /* PHẦN A: 4 Widget Nhỏ (Nửa trên) */
+        /* PHẦN A: 4 Widget Nhỏ */
         .mini-widgets-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
             gap: 20px; 
-            flex: 1; /* Chiếm 50% chiều cao */
+            /* Chiều cao cố định tương đương phần AQI Card */
+            height: var(--row-height); 
         }
         .widget {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 15px; border: 1px solid #f1f5f9; 
-            height: 100%; /* Đảm bảo full chiều cao ô chứa */
+            text-align: center; padding: 15px; border: 1px solid #f1f5f9; height: 100%;
         }
         .w-icon { font-size: 2rem; margin-bottom: 5px; }
         .w-label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -120,15 +122,16 @@
         .w-unit { font-size: 0.9rem; font-weight: 600; color: #94a3b8; }
         .c-temp { color: #f59e0b; } .c-humi { color: #3b82f6; } .c-pm { color: #10b981; } .c-co { color: #ef4444; }
 
-        /* PHẦN B: CONTROL HUB (Nửa dưới) */
+        /* PHẦN B: CONTROL HUB (Nút bấm & Đồng hồ) */
         .control-hub {
             background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow);
-            flex: 1; /* Chiếm 50% chiều cao còn lại */
+            /* Chiều cao khớp với 1 hàng biểu đồ (300px) */
+            height: 300px; 
             display: flex; flex-direction: column;
             overflow: hidden; border: 1px solid #f1f5f9;
         }
 
-        /* Chia đôi Control Hub: Trên (Time) - Dưới (Buttons) */
+        /* Chia đôi: Trên (Time) - Dưới (Buttons) */
         .hub-header {
             flex: 1; display: flex;
             border-bottom: 1px solid #e2e8f0;
@@ -140,17 +143,30 @@
         }
         .hub-cell.separator { border-right: 1px solid #e2e8f0; }
 
-        .time-display { font-size: 2.8rem; font-weight: 800; color: #1e293b; line-height: 1; letter-spacing: -2px; }
-        .date-day { font-size: 0.9rem; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 2px; }
-        .date-full { font-size: 1.2rem; font-weight: 800; color: #334155; letter-spacing: -0.5px; }
+        .time-display { 
+            font-size: 3rem; font-weight: 800; color: #1e293b; 
+            line-height: 1; letter-spacing: -2px; 
+        }
+        
+        /* DATE TO HƠN THEO YÊU CẦU */
+        .date-day { 
+            font-size: 1.1rem; /* To hơn */
+            font-weight: 600; color: #64748b; 
+            text-transform: uppercase; margin-bottom: 5px; 
+        }
+        .date-full { 
+            font-size: 1.8rem; /* Rất to */
+            font-weight: 800; color: #334155; 
+            letter-spacing: -1px; 
+        }
 
         .hub-buttons {
-            flex: 1.2; display: flex; gap: 15px; padding: 15px;
+            flex: 1.2; display: flex; gap: 20px; padding: 20px;
             background: #f8fafc;
         }
 
         .ctrl-btn {
-            flex: 1; background: #ffffff; border-radius: 16px;
+            flex: 1; background: #ffffff; border-radius: 18px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid #e2e8f0;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s ease;
@@ -159,12 +175,12 @@
         .ctrl-btn:active { transform: scale(0.98); }
 
         .btn-icon-circle {
-            width: 38px; height: 38px; background: #f1f5f9; border-radius: 50%;
+            width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; margin-bottom: 6px; transition: 0.3s;
+            font-size: 1.6rem; margin-bottom: 8px; transition: 0.3s;
         }
-        .btn-label { font-size: 0.85rem; font-weight: 700; color: #475569; }
-        .btn-status { font-size: 0.7rem; font-weight: 600; color: #94a3b8; margin-top: 2px; }
+        .btn-label { font-size: 1rem; font-weight: 700; color: #475569; }
+        .btn-status { font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-top: 4px; }
 
         .ctrl-btn.active { border-color: var(--primary-green); background: #ecfdf5; }
         .ctrl-btn.active .btn-icon-circle { background: var(--primary-green); color: #fff; }
@@ -224,6 +240,7 @@
         </div>
 
         <div class="right-col-grid">
+            
             <div class="mini-widgets-wrapper">
                 <div class="widget">
                     <div class="w-icon">🌡️</div>
@@ -275,6 +292,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -288,7 +306,6 @@
 
     let charts = {};
     let gauge;
-
     const AQI_COLORS = ['#4ade80', '#facc15', '#fb923c', '#ef4444', '#a855f7', '#881337'];
 
     function getColorForAQI(aqi) {
@@ -299,7 +316,6 @@
         if (aqi <= 300) return AQI_COLORS[4];
         return AQI_COLORS[5];
     }
-
     function getTextForAQI(aqi) {
         if (aqi <= 50) return "Good";
         if (aqi <= 100) return "Moderate";
@@ -308,7 +324,6 @@
         if (aqi <= 300) return "Very Unhealthy";
         return "Hazardous";
     }
-
     const commonOptions = {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
@@ -356,7 +371,6 @@
 
             const numbers = [0, 50, 100, 150, 200, 300, 500];
             const segmentAngle = Math.PI / 6;
-            
             ctx.font = '700 15px Inter'; 
             ctx.fillStyle = '#64748b';
             ctx.textAlign = 'center';
@@ -366,9 +380,9 @@
             const manualOffsets = [
                 { r: 34, y: 22 },   // 0
                 { r: 24, y: 28 },   // 50
-                { r: 15, y: 35 },   // 100 (Kéo xuống vừa phải)
-                { r: 5,  y: 45 },   // 150 (Sát đỉnh)
-                { r: 15, y: 35 },   // 200 (Đối xứng 100)
+                { r: 15, y: 35 },   // 100
+                { r: 5,  y: 45 },   // 150
+                { r: 15, y: 35 },   // 200
                 { r: 24, y: 28 },   // 300
                 { r: 34, y: 22 }    // 500
             ];
@@ -417,13 +431,13 @@
 
         fetchData();
         setInterval(fetchData, 20000);
-        setInterval(updateClock, 1000); // Chạy đồng hồ
+        setInterval(updateClock, 1000); 
         updateClock();
     }
 
     function updateClock() {
         const now = moment();
-        now.locale('vi'); // Tiếng Việt cho Thứ
+        now.locale('vi'); 
         document.getElementById('clock-time').innerText = now.format('HH:mm');
         document.getElementById('clock-day').innerText = now.format('dddd');
         document.getElementById('clock-date').innerText = now.format('DD/MM/YYYY');
@@ -433,11 +447,7 @@
         const btn = document.getElementById(id);
         const statusEl = btn.querySelector('.btn-status');
         btn.classList.toggle('active');
-        if(btn.classList.contains('active')) {
-            statusEl.innerText = "ON";
-        } else {
-            statusEl.innerText = "OFF";
-        }
+        statusEl.innerText = btn.classList.contains('active') ? "ON" : "OFF";
     }
 
     function setStatus(ok, msg) {
