@@ -249,7 +249,7 @@
         if (aqi > 85) { // Ngưỡng cảnh báo AQI
             iconEl.innerText = "😷"; statusEl.innerText = "Kém"; 
             msgEl.innerText = "Chất lượng không khí giảm. Cân nhắc bật lọc khí."; 
-        } else if (temp > 26) { // Ngưỡng cảnh báo Nóng
+        } else if (temp > 28) { // [ĐÃ SỬA] Chỉ cảnh báo nếu > 28 (vì 27-28 là bình thường)
             iconEl.innerText = "🥵"; statusEl.innerText = "Hơi nóng"; 
             msgEl.innerText = "Nhiệt độ đang tăng. Cân nhắc bật điều hòa."; 
         } else if (humi > 80) { // Ngưỡng cảnh báo Ẩm
@@ -267,15 +267,22 @@
     async function toggleBtn(id) {
         const isAC = id === 'btn-ac';
         let currentMode = isAC ? ctrlMode.ac : ctrlMode.fan;
+        let currentReal = isAC ? realState.ac : realState.fan; 
         
-        // [LOGIC MỚI] 
-        // Nếu đang là AUTO (0) hoặc BẬT (1) -> Chuyển sang TẮT (2)
-        // Nếu đang là TẮT (2) -> Chuyển về AUTO (0)
+        // [LOGIC MỚI THEO YÊU CẦU]
         let newMode;
-        if (currentMode === 0 || currentMode === 1) {
-            newMode = 2; // Tắt ngay
-        } else {
-            newMode = 0; // Quay về Auto
+
+        // 1. Nếu đang nghỉ (Auto & Thực tế=Tắt) -> Bấm vào thành BẬT (1)
+        if (currentMode === 0 && currentReal === 0) {
+            newMode = 1;
+        }
+        // 2. Nếu đang bật (Bất kể là Auto đang chạy hay Bật thủ công) -> Bấm vào thành TẮT (2)
+        else if (currentReal === 1 || currentMode === 1) {
+            newMode = 2;
+        }
+        // 3. Trường hợp còn lại (Đang Tắt thủ công) -> Về Auto (0)
+        else {
+            newMode = 0;
         }
 
         if (isAC) ctrlMode.ac = newMode; else ctrlMode.fan = newMode;
